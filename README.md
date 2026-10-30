@@ -43,4 +43,4 @@ Esta versão não solicita dados pessoais. **Nunca publique credenciais do Fireb
 - Adicionar materiais educativos sobre desinformação e deepfakes.
 - Organizar a oficina, questionários antes/depois e relatório extensionista.
 
-Projeto desenvolvido para fins educacionais.
+Projeto desenvolvido para fins educacionais
