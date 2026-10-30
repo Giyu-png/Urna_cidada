@@ -1,0 +1,14 @@
+target/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.DS_Store
+.env
+.env.*
+secrets/
+*service-account*.json
+*firebase-admin*.json
+*credentials*.json
+
