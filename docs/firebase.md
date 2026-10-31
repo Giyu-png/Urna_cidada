@@ -151,3 +151,28 @@ Para conferir a apresentação visual, execute `ApuracaoMain`, alterne entre
 as abas, clique em **ATUALIZAR RESULTADOS** e ordene por **Votos** ou
 **Percentual**. Teste também uma janela redimensionada para verificar se há
 espaçamento adequado.
+
+## 10. Cadastro centralizado e fotos dos candidatos
+
+O arquivo `src/main/java/br/edu/urnacidada/service/CatalogoFicticio.java`
+define **uma lista única de fichas** (candidato, número, partido e PNG).
+Para adicionar uma nova candidatura fictícia, edite a lista `FICHAS`;
+para adicionar um partido fictício, inclua-o na lista `PARTIDOS` também.
+Escolha um número ainda livre no mesmo cargo.
+
+As fotos ficam em `src/main/resources/candidatos/`, com os nomes
+documentados no `LEIA-ME.md` dessa pasta. Na ausência de um PNG, é
+desenhada uma **silhueta neutra**: a aplicação continua executável sem
+imagens adicionais. As fotos são carregadas do classpath, não do Firestore.
+
+A urna agora tem visor com quatro ou dois campos de número, dados do
+candidato e fotografia, além de teclado escuro e teclas BRANCO, CORRIGE
+e CONFIRMA. A ordem dos cargos e a persistência no Firebase não mudaram.
+A apuração passou a gerar a lista de candidatos e partidos automaticamente
+a partir do mesmo cadastro (sem chaves estáticas duplicadas). O painel exibe
+miniaturas nas linhas nominais e destaca **o mais votado até o momento**.
+Isso não equivale a declarar um vencedor, pois não há encerramento formal
+do pleito ou apuração de cadeiras proporcionais.
+
+Teste: votação nominal, legenda, branco, nulo, transição de cargo,
+carregamento sem PNG, fotos PNG opcionais e consulta em `ApuracaoMain`.

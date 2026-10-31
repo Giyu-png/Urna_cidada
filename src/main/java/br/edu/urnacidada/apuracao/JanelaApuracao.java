@@ -2,6 +2,8 @@ package br.edu.urnacidada.apuracao;
 
 import br.edu.urnacidada.config.FirebaseConfig;
 import br.edu.urnacidada.model.Cargo;
+import br.edu.urnacidada.service.CatalogoFicticio;
+import br.edu.urnacidada.view.FotoCandidato;
 import br.edu.urnacidada.repository.FirestoreVotoRepository;
 import br.edu.urnacidada.view.Tema;
 import com.google.cloud.firestore.Firestore;
@@ -22,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -54,6 +57,7 @@ public final class JanelaApuracao extends JFrame {
     private final JLabel estado = Tema.texto("Nenhuma consulta realizada.", 14, false);
     private final Map<Cargo, DefaultTableModel> modelos = new EnumMap<>(Cargo.class);
     private final Map<Cargo, Indicadores> indicadores = new EnumMap<>(Cargo.class);
+    private final Map<Cargo, JLabel> liderancas = new EnumMap<>(Cargo.class);
 
     public JanelaApuracao() {
         super("Urna Cidadã — Painel de Apuração");
@@ -114,17 +118,25 @@ public final class JanelaApuracao extends JFrame {
         resumo.add(criarCartao("TOTAL DE VOTOS", valorTotal));
         resumo.add(criarCartao("VOTOS EM BRANCO", valorBrancos));
         resumo.add(criarCartao("VOTOS NULOS", valorNulos));
-        painel.add(resumo, BorderLayout.NORTH);
+        JPanel topoResultados = new JPanel(new BorderLayout(0, 14));
+        topoResultados.setOpaque(false);
+        topoResultados.add(resumo, BorderLayout.NORTH);
+        JLabel lideranca = Tema.texto("Liderança: aguardando consulta.", 15, true);
+        lideranca.setForeground(Tema.AZUL);
+        liderancas.put(cargo, lideranca);
+        topoResultados.add(lideranca, BorderLayout.SOUTH);
+        painel.add(topoResultados, BorderLayout.NORTH);
 
         DefaultTableModel modelo = new DefaultTableModel(
-                new Object[]{"Opção", "Tipo", "Número", "Votos", "Percentual"}, 0) {
+                new Object[]{"Foto", "Opção", "Tipo", "Número", "Votos", "Percentual"}, 0) {
             @Override public boolean isCellEditable(int linha, int coluna) {
                 return false;
             }
             @Override public Class<?> getColumnClass(int coluna) {
                 return switch (coluna) {
-                    case 3 -> Long.class;
-                    case 4 -> Double.class;
+                    case 0 -> ImageIcon.class;
+                    case 4 -> Long.class;
+                    case 5 -> Double.class;
                     default -> String.class;
                 };
             }
@@ -163,7 +175,7 @@ public final class JanelaApuracao extends JFrame {
 
     private void configurarTabela(JTable tabela) {
         tabela.setFont(new Font("SansSerif", Font.PLAIN, 15));
-        tabela.setRowHeight(46);
+        tabela.setRowHeight(68);
         tabela.setAutoCreateRowSorter(true);
         tabela.setFillsViewportHeight(true);
         tabela.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -176,8 +188,8 @@ public final class JanelaApuracao extends JFrame {
         tabela.setRowSelectionAllowed(true);
         tabela.setColumnSelectionAllowed(false);
 
-        int[] larguras = {390, 120, 110, 110, 140};
-        int[] minimos = {270, 100, 85, 95, 120};
+        int[] larguras = {72, 355, 115, 100, 112, 138};
+        int[] minimos = {64, 250, 92, 82, 94, 120};
         for (int coluna = 0; coluna < larguras.length; coluna++) {
             tabela.getColumnModel().getColumn(coluna).setPreferredWidth(larguras[coluna]);
             tabela.getColumnModel().getColumn(coluna).setMinWidth(minimos[coluna]);
@@ -197,8 +209,8 @@ public final class JanelaApuracao extends JFrame {
                 rotulo.setBackground(FUNDO_CABECALHO);
                 rotulo.setForeground(Tema.TEXTO);
                 rotulo.setBorder(new EmptyBorder(0, 14, 0, 14));
-                rotulo.setHorizontalAlignment(coluna >= 3 ? SwingConstants.RIGHT
-                        : coluna == 0 ? SwingConstants.LEFT : SwingConstants.CENTER);
+                rotulo.setHorizontalAlignment(coluna >= 4 ? SwingConstants.RIGHT
+                        : coluna == 1 ? SwingConstants.LEFT : SwingConstants.CENTER);
             }
             return componente;
         });
@@ -220,8 +232,8 @@ public final class JanelaApuracao extends JFrame {
                     foco, linha, colunaVisivel);
 
             setHorizontalAlignment(switch (coluna) {
-                case 0 -> SwingConstants.LEFT;
-                case 3, 4 -> SwingConstants.RIGHT;
+                case 1 -> SwingConstants.LEFT;
+                case 4, 5 -> SwingConstants.RIGHT;
                 default -> SwingConstants.CENTER;
             });
             setBorder(new EmptyBorder(0, 14, 0, 14));
@@ -229,10 +241,14 @@ public final class JanelaApuracao extends JFrame {
                 setBackground(linha % 2 == 0 ? Tema.BRANCO : LINHA_ALTERNADA);
                 setForeground(Tema.TEXTO);
             }
-            if (valor instanceof Number numero) {
-                if (coluna == 3) {
+            setIcon(null);
+            if (coluna == 0) {
+                setText("");
+                if (valor instanceof ImageIcon imagem) setIcon(imagem);
+            } else if (valor instanceof Number numero) {
+                if (coluna == 4) {
                     setText(formatarInteiro(numero.longValue()));
-                } else if (coluna == 4) {
+                } else if (coluna == 5) {
                     setText(String.format(PORTUGUES, "%.1f%%", numero.doubleValue()));
                 }
             }
@@ -270,8 +286,13 @@ public final class JanelaApuracao extends JFrame {
                         modelo.setRowCount(0);
                         for (ResumoApuracao.Linha linha : dados.linhas()) {
                             // Números permanecem numéricos: ordenação correta na tabela.
+                            ImageIcon retrato = "Nominal".equals(linha.tipo())
+                                    ? CatalogoFicticio.buscarFicha(cargo, linha.numero())
+                                        .map(f -> FotoCandidato.icone(f.candidato(), 46, 56))
+                                        .orElse(null)
+                                    : null;
                             modelo.addRow(new Object[]{
-                                linha.opcao(), linha.tipo(), linha.numero(),
+                                retrato, linha.opcao(), linha.tipo(), linha.numero(),
                                 linha.votos(), linha.percentual()
                             });
                         }
@@ -279,6 +300,7 @@ public final class JanelaApuracao extends JFrame {
                         cartoes.total().setText(formatarInteiro(dados.total()));
                         cartoes.brancos().setText(formatarInteiro(dados.brancos()));
                         cartoes.nulos().setText(formatarInteiro(dados.nulos()));
+                        liderancas.get(cargo).setText(textoLideranca(dados));
                     }
                     estado.setText("Resultados atualizados às " + LocalTime.now().format(RELOGIO)
                             + "  •  Simulação: " + SIMULACAO_ID);
@@ -292,6 +314,21 @@ public final class JanelaApuracao extends JFrame {
                 }
             }
         }.execute();
+    }
+
+    private static String textoLideranca(ResumoApuracao.PorCargo dados) {
+        long maior = dados.linhas().stream()
+                .filter(linha -> "Nominal".equals(linha.tipo()))
+                .mapToLong(ResumoApuracao.Linha::votos)
+                .max().orElse(0L);
+        if (maior == 0) return "Liderança: nenhum voto nominal registrado.";
+        var lideres = dados.linhas().stream()
+                .filter(linha -> "Nominal".equals(linha.tipo()) && linha.votos() == maior)
+                .toList();
+        if (lideres.size() > 1) return "Liderança: empate entre "
+                + lideres.size() + " candidaturas (" + formatarInteiro(maior) + " votos).";
+        return "Mais votado até agora: " + lideres.get(0).opcao()
+                + " (" + formatarInteiro(maior) + " votos).";
     }
 
     private void mostrarErro() {

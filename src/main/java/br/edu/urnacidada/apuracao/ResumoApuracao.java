@@ -2,6 +2,7 @@ package br.edu.urnacidada.apuracao;
 
 import br.edu.urnacidada.model.Candidato;
 import br.edu.urnacidada.model.Cargo;
+import br.edu.urnacidada.model.Partido;
 import br.edu.urnacidada.service.CatalogoFicticio;
 import br.edu.urnacidada.service.VotacaoService;
 import java.util.ArrayList;
@@ -13,8 +14,8 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Transforma contagens agregadas (sem dados de eleitores) em resultados por cargo.
- * Não chama a rede e pode ser testada sem credenciais.
+ * Transforma contagens agregadas em resultados por cargo.
+ * A lista de candidatos e partidos vem diretamente de CatalogoFicticio.
  */
 public final class ResumoApuracao {
     public record Linha(String opcao, String tipo, String numero, long votos, double percentual) {}
@@ -26,30 +27,27 @@ public final class ResumoApuracao {
 
     private ResumoApuracao() {}
 
-    /** Mantém a mesma lista de candidatos fictícios usada na urna. */
-    private static final Map<Cargo, List<String>> CHAVES_CONHECIDAS = Map.of(
-        Cargo.DEPUTADO_FEDERAL, List.of(
-            "DEPUTADO_FEDERAL_NOMINAL_8101",
-            "DEPUTADO_FEDERAL_NOMINAL_8202",
-            "DEPUTADO_FEDERAL_LEGENDA_81",
-            "DEPUTADO_FEDERAL_LEGENDA_82",
-            "DEPUTADO_FEDERAL_BRANCO",
-            "DEPUTADO_FEDERAL_NULO"),
-        Cargo.PRESIDENTE, List.of(
-            "PRESIDENTE_NOMINAL_81",
-            "PRESIDENTE_NOMINAL_82",
-            "PRESIDENTE_BRANCO",
-            "PRESIDENTE_NULO")
-    );
-
     public static Map<Cargo, PorCargo> analisar(Map<String, Long> quantidades) {
         Objects.requireNonNull(quantidades, "quantidades");
         VotacaoService catalogo = CatalogoFicticio.criarServico();
         Map<Cargo, PorCargo> resultado = new LinkedHashMap<>();
 
         for (Cargo cargo : Cargo.values()) {
-            Set<String> chaves = new LinkedHashSet<>(CHAVES_CONHECIDAS.get(cargo));
-            // Não perder votos de categorias ou candidatos adicionados posteriormente.
+            Set<String> chaves = new LinkedHashSet<>();
+            for (Candidato candidato : CatalogoFicticio.candidatos()) {
+                if (candidato.getCargo() == cargo) {
+                    chaves.add(cargo.name() + "_NOMINAL_" + candidato.getNumero());
+                }
+            }
+            if (cargo == Cargo.DEPUTADO_FEDERAL) {
+                for (Partido partido : CatalogoFicticio.partidos()) {
+                    chaves.add(cargo.name() + "_LEGENDA_" + partido.getNumero());
+                }
+            }
+            chaves.add(cargo.name() + "_BRANCO");
+            chaves.add(cargo.name() + "_NULO");
+
+            // Inclui registros antigos ou opções que ainda não constam do catálogo.
             quantidades.keySet().stream()
                 .filter(chave -> chave.startsWith(cargo.name() + "_"))
                 .sorted()
@@ -83,8 +81,10 @@ public final class ResumoApuracao {
                     tipo = "Legenda";
                     numero = sufixo.substring("LEGENDA_".length());
                     String referencia = numero;
-                    opcao = catalogo.buscarCandidato(Cargo.PRESIDENTE, referencia)
-                        .map(c -> "Legenda — " + c.getPartido().getNome())
+                    opcao = CatalogoFicticio.partidos().stream()
+                        .filter(p -> p.getNumero().equals(referencia))
+                        .map(p -> "Legenda — " + p.getNome())
+                        .findFirst()
                         .orElse("Legenda " + referencia);
                 } else if ("BRANCO".equals(sufixo)) {
                     tipo = "Branco";

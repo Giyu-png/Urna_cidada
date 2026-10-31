@@ -20,6 +20,17 @@ mvn package
 java -jar target/urna-cidada-0.1.0.jar
 ```
 
+## Cadastro de candidatos e fotos
+
+Os candidatos fictícios são cadastrados **somente** em
+`src/main/java/br/edu/urnacidada/service/CatalogoFicticio.java`. O mesmo
+catálogo alimenta a urna e a apuração. Os PNGs opcionais ficam em
+`src/main/resources/candidatos/`; sem arquivos de imagem, aparece uma
+silhueta neutra. Leia o `LEIA-ME.md` da pasta de fotos.
+
+Para abrir a urna execute `br.edu.urnacidada.Main`; para abrir a
+apuração separada, execute `br.edu.urnacidada.apuracao.ApuracaoMain`.
+
 ## Como testar a simulação
 
 - **Deputado federal:** digite `8101` ou `8202` para votos nominais, ou `81` / `82` para votos de legenda.
