@@ -21,6 +21,19 @@ class UrnaControllerTest {
         assertEquals(1, repository.contarVotos(Cargo.PRESIDENTE, TipoVoto.BRANCO));
     }
 
+    @Test void sessaoConcluidaPodeSerReenviadaComMesmoId() {
+        UrnaController urna = new UrnaController(
+                CatalogoFicticio.criarServico(), new MemoriaVotoRepository());
+        assertThrows(IllegalStateException.class, urna::getSessaoConcluida);
+        urna.votarBranco();
+        assertTrue(urna.confirmar());
+        urna.votarBranco();
+        assertTrue(urna.confirmar());
+        SessaoVotacao sessao = urna.getSessaoConcluida();
+        assertEquals(2, sessao.getVotos().size());
+        assertSame(sessao, urna.getSessaoConcluida());
+    }
+
     @Test void corrigirApagaNumeroMasNaoVotoJaConfirmado() {
         UrnaController urna = new UrnaController(
                 CatalogoFicticio.criarServico(), new MemoriaVotoRepository());

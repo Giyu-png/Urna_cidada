@@ -88,3 +88,28 @@ Se a gravação falhar, a transação não deve adicionar resultados parciais. I
 - https://docs.cloud.google.com/firestore/native/docs/create-database-server-client-library
 - https://firebase.google.com/docs/firestore/manage-data/transactions
 - https://docs.cloud.google.com/java/docs/reference/google-cloud-firestore/latest/overview
+
+## 8. Integração com a interface Swing
+
+Na branch `feature/firebase-firestore`, a interface envia a sessão concluída ao
+Firestore usando `SwingWorker` para não bloquear a thread de eventos do Swing.
+
+1. Execute `br.edu.urnacidada.Main` pelo IntelliJ com suas credenciais ADC locais.
+2. Conclua a votação fictícia para os dois cargos.
+3. A tela **SALVANDO VOTAÇÃO** aguarda a confirmação da nuvem.
+4. Só depois da gravação confirmada a tela **FIM** informa que os votos foram contabilizados no Firestore.
+5. Se a nuvem falhar, escolha **TENTAR NOVAMENTE** (mesmo ID de sessão, sem duplicação), ou **CONTINUAR SEM SALVAR NA NUVEM**, que informa claramente que a confirmação remota não ocorreu.
+
+As gravações da interface ficam em
+`simulacoes/demonstracao-interface-2026/resultados`, separadas dos testes manuais
+`simulacoes/diagnostico-integracao-2026`. Cada execução bem-sucedida representa
+uma sessão fictícia completa, com dois votos.
+
+**Atenção:** credenciais ADC permitem acesso privilegiado e **não devem ser
+distribuídas aos participantes ou empacotadas no desktop**. A comunicação
+direta com o Firestore é apropriada apenas para uso supervisionado em uma
+máquina administrada pelos desenvolvedores. Para distribuição a estudantes,
+implante um backend intermediário com autenticação e privilégios mínimos.
+
+Os avisos de SLF4J ou métodos nativos vistos com Java 25 não impedem a
+persistência, mas a versão recomendada para o projeto continua Java 21.

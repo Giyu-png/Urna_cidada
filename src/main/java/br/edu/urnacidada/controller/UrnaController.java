@@ -23,6 +23,14 @@ public final class UrnaController {
     public String getDigitos() { return digitos.toString(); }
     public boolean isBrancoSelecionado() { return brancoSelecionado; }
     public boolean estaConcluida() { return sessao.estaConcluida(); }
+
+    /** Devolve uma sessão concluída para sincronização em segundo plano. */
+    public SessaoVotacao getSessaoConcluida() {
+        if (!sessao.estaConcluida()) {
+            throw new IllegalStateException("A sessão ainda não foi concluída.");
+        }
+        return sessao;
+    }
     public String getDescricaoEscolha() {
         if (estaConcluida()) return "FIM DA SIMULAÇÃO";
         return service.descreverEscolha(getCargoAtual(), getDigitos(), brancoSelecionado);
