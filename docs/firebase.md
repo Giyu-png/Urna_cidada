@@ -2,7 +2,7 @@
 
 Esta branch implementa o armazenamento de **votos fictícios agregados**, não de dados pessoais. O programa utiliza Java 21, Maven e a biblioteca oficial `google-cloud-firestore:3.49.0`.
 
-> **Situação:** a implementação da camada de persistência está disponível, mas a interface Swing continua usando `MemoriaVotoRepository` até a integração ser acordada com o grupo. Ainda é necessário criar um projeto Firebase, configurar credenciais locais e testar a conexão de verdade.
+> **Situação:** a urna mantém uma cópia da sessão em memória e envia os dois votos ao Firestore em segundo plano após a confirmação. A integração real depende de ADC com acesso ao projeto; ainda precisa ser validada no ambiente de demonstração.
 
 ## 1. Criar o banco
 
@@ -57,7 +57,7 @@ VotoRepository repository = new FirestoreVotoRepository(db, "oficina-2026");
 
 A aplicação deve manter o cliente `db` aberto durante seu uso e executar `db.close()` ao encerrar. **Não coloque a gravação síncrona diretamente na thread de eventos do Swing**, pois lentidão de rede congela a tela. A integração com a UI deve usar `SwingWorker` ou outra execução assíncrona com estado de confirmação/erro recuperável.
 
-A versão atual ainda cria `MemoriaVotoRepository` em `JanelaPrincipal`. Ela permanece como padrão até a equipe alinhar a substituição. O JAR simples do Maven não empacota dependências do Firestore; o projeto abre pelo IntelliJ, e a distribuição exigirá empacotamento adequado depois.
+`JanelaPrincipal` mantém `MemoriaVotoRepository` para o estado local do fluxo e envia a sessão completa ao Firestore por `SwingWorker`. O empacotamento Maven gera `target/urna-cidada-0.1.0.jar` com as dependências do Firestore; depois de `mvn package`, ele pode ser aberto com `java -jar target/urna-cidada-0.1.0.jar`. Credenciais ADC continuam sendo necessárias para sincronizar.
 
 ## 5. Proteção contra contagem duplicada
 
