@@ -113,3 +113,27 @@ implante um backend intermediário com autenticação e privilégios mínimos.
 
 Os avisos de SLF4J ou métodos nativos vistos com Java 25 não impedem a
 persistência, mas a versão recomendada para o projeto continua Java 21.
+
+## 9. Aplicação de apuração separada (somente leitura)
+
+A urna e o painel administrativo são duas janelas **independentes** no mesmo
+projeto Maven. A urna permanece em `br.edu.urnacidada.Main`. Para abrir somente
+o painel de apuração, execute `br.edu.urnacidada.apuracao.ApuracaoMain`
+no IntelliJ (ou uma configuração Application com essa Main class).
+
+O painel lê `simulacoes/demonstracao-interface-2026/resultados`, exatamente a
+mesma simulação usada pela interface de votação, mas **não altera documentos**.
+Ele mostra uma aba por cargo, opções e candidatos fictícios, voto em legenda,
+brancos, nulos, totais e percentuais. Clique em **ATUALIZAR RESULTADOS** para
+consultar novamente o Firestore; o processo acontece em segundo plano.
+
+Os percentuais são calculados em relação ao total de votos do respectivo
+cargo (incluindo brancos, nulos e legenda). Nomes conhecidos são retirados do
+catálogo fictício; categorias novas também aparecem para não ocultar contagens.
+Em caso de falha de rede, o painel preserva a última consulta bem-sucedida e
+mostra erro, em vez de substituir resultados válidos por zeros.
+
+**Importante:** a interface da urna não ganha um botão de apuração.
+A leitura por SDK Java usa as credenciais ADC do administrador e não deve ser
+distribuída a alunos ou público. A aplicação não oferece votação nem faz
+gravações no Firebase.
