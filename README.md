@@ -20,6 +20,8 @@ mvn package
 java -jar target/urna-cidada-0.1.0.jar
 ```
 
+O JAR gerado inclui as dependências necessárias para a sincronização com o Firestore. O acesso à nuvem ainda requer ADC configuradas no computador.
+
 ## Cadastro de candidatos e fotos
 
 Os candidatos fictícios são cadastrados **somente** em
