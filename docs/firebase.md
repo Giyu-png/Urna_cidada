@@ -78,10 +78,10 @@ Se a gravação falhar, a transação não deve adicionar resultados parciais. I
 
 ## 7. Próximos passos com o grupo
 
-- Integrar `FirestoreVotoRepository` com `JanelaPrincipal` sem bloquear a UI.
-- Criar uma tela de resultados agregados em área reservada ao facilitador.
-- Validar a persistência com o emulador ou projeto Firebase de teste.
-- Adicionar testes de integração e revisar permissões das contas utilizadas.
+- Validar a persistência com o emulador ou projeto Firebase de teste, incluindo falhas e reenvio.
+- Adicionar testes automatizados de integração para a transação e a consulta de resultados.
+- Revisar as permissões ADC e manter acesso mínimo na máquina administrativa.
+- Antes de distribuir para participantes, substituir o acesso direto por um backend autenticado.
 
 ## Referências técnicas
 
