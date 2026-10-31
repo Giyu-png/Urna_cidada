@@ -59,7 +59,7 @@ public final class UrnaController {
 
     /**
      * Retorna false quando a escolha ainda estiver incompleta.
-     * Ao finalizar os dois cargos, salva a sessão no repositório configurado.
+     * Ao finalizar os dois cargos, registra a sessão uma única vez.
      */
     public boolean confirmar() {
         if (estaConcluida()) throw new IllegalStateException("Sessão encerrada.");
@@ -71,10 +71,6 @@ public final class UrnaController {
         brancoSelecionado = false;
 
         if (sessao.estaConcluida()) {
-            // Regista a sessão no repositório existente
-            repository.registrarSessao(sessao);
-
-            // Aciona o serviço de apuração para tratar e enviar os dados
             ApuracaoService apuracaoService = new ApuracaoService(repository);
             apuracaoService.processarEEinviarContagem(sessao);
         }
@@ -82,4 +78,3 @@ public final class UrnaController {
         return true;
     }
 }
-
