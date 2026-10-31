@@ -30,7 +30,7 @@ public final class TesteGravacaoFirestore {
 
             // Valores fictícios, desvinculados de pessoas ou candidatos reais.
             SessaoVotacao sessao = new SessaoVotacao();
-            Voto deputado = Voto.nominal(Cargo.DEPUTADO_FEDERAL, "8101");
+            Voto deputado = Voto.nominal(Cargo.DEPUTADO_FEDERAL, "6767");
             Voto presidente = Voto.branco(Cargo.PRESIDENTE);
             sessao.registrarVoto(deputado);
             sessao.registrarVoto(presidente);
