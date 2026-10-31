@@ -2,6 +2,7 @@ package br.edu.urnacidada.controller;
 
 import br.edu.urnacidada.model.*;
 import br.edu.urnacidada.repository.VotoRepository;
+import br.edu.urnacidada.service.ApuracaoService;
 import br.edu.urnacidada.service.VotacaoService;
 import java.util.Objects;
 
@@ -56,10 +57,20 @@ public final class UrnaController {
         if (estaConcluida()) throw new IllegalStateException("Sessão encerrada.");
         Voto voto = service.classificarVoto(getCargoAtual(), getDigitos(), brancoSelecionado);
         if (voto == null) return false;
+
         sessao.registrarVoto(voto);
         digitos.setLength(0);
         brancoSelecionado = false;
-        if (sessao.estaConcluida()) repository.registrarSessao(sessao);
+
+        if (sessao.estaConcluida()) {
+            // Regista a sessão no repositório existente
+            repository.registrarSessao(sessao);
+
+            // Aciona o serviço de apuração para tratar e enviar os dados
+            ApuracaoService apuracaoService = new ApuracaoService(repository);
+            apuracaoService.processarEEinviarContagem(sessao);
+        }
+
         return true;
     }
 }
