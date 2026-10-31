@@ -6,7 +6,7 @@ import com.google.cloud.firestore.FirestoreOptions;
 import java.io.IOException;
 
 /**
- * Cria o cliente Firestore usando Application Default Credentials (ADC).
+ * Cria o cliente Firestore com ADC, ou sem credenciais reais quando o emulador está ativo.
  * O ID público do projeto tem um valor padrão para facilitar a execução local.
  * Credenciais privadas nunca devem ser colocadas no código ou repositório.
  */
@@ -23,10 +23,18 @@ public final class FirebaseConfig {
     }
 
     public static Firestore criarCliente() throws IOException {
-        return FirestoreOptions.getDefaultInstance().toBuilder()
-                .setProjectId(obterIdProjeto())
-                .setCredentials(GoogleCredentials.getApplicationDefault())
-                .build()
-                .getService();
+        FirestoreOptions.Builder opcoes = FirestoreOptions.getDefaultInstance()
+                .toBuilder()
+                .setProjectId(obterIdProjeto());
+
+        String hostEmulador = System.getenv("FIRESTORE_EMULATOR_HOST");
+        if (hostEmulador != null && !hostEmulador.isBlank()) {
+            opcoes.setEmulatorHost(hostEmulador.trim())
+                    .setCredentials(new FirestoreOptions.EmulatorCredentials());
+        } else {
+            opcoes.setCredentials(GoogleCredentials.getApplicationDefault());
+        }
+
+        return opcoes.build().getService();
     }
 }
