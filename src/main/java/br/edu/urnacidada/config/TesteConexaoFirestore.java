@@ -3,18 +3,20 @@ package br.edu.urnacidada.config;
 import com.google.cloud.firestore.Firestore;
 
 /**
- * Diagnóstico manual de conexão: testa leitura, sem criar ou alterar documentos.
+ * Diagnóstico manual de leitura no Firestore (sem criar ou alterar documentos).
  *
- * Configure FIRESTORE_PROJECT_ID e Application Default Credentials (ADC)
- * no ambiente antes de executar esta classe pelo IntelliJ IDEA.
+ * É necessário autenticar localmente com:
+ * gcloud auth application-default login
+ *
+ * A variável FIRESTORE_PROJECT_ID é opcional; o projeto padrão é
+ * urna-cidada-pjde-3. Nenhuma credencial é salva no repositório.
  */
 public final class TesteConexaoFirestore {
     private TesteConexaoFirestore() {}
 
     public static void main(String[] args) {
-        String projectId = System.getenv("FIRESTORE_PROJECT_ID");
         try (Firestore db = FirebaseConfig.criarCliente()) {
-            System.out.println("Verificando acesso ao projeto: " + projectId);
+            System.out.println("Verificando acesso ao projeto: " + FirebaseConfig.obterIdProjeto());
             db.collection("simulacoes").limit(1).get().get();
             System.out.println("SUCESSO: conexão e leitura do Cloud Firestore confirmadas.");
             System.out.println("Nenhum documento foi criado ou alterado.");

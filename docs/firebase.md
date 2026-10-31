@@ -16,13 +16,13 @@ Esta branch implementa o armazenamento de **votos fictícios agregados**, não d
 
 Use **Application Default Credentials (ADC)** da conta do Google Cloud configurada com acesso mínimo necessário, de preferência uma conta de serviço para testes isolados. Com o Google Cloud CLI, uma alternativa é executar `gcloud auth application-default login` no próprio computador. Documentação oficial: https://cloud.google.com/docs/authentication/provide-credentials-adc
 
-Configure no IntelliJ (Run > Edit Configurations > Environment variables):
+O ID público do projeto já vem configurado como `urna-cidada-pjde-3`. **Não é necessário definir uma variável no IntelliJ para testar esse projeto.** Se precisar usar outro projeto, configure opcionalmente em Run > Edit Configurations > Environment variables:
 
 ```text
-FIRESTORE_PROJECT_ID=seu-projeto-firebase
+FIRESTORE_PROJECT_ID=outro-id-de-projeto
 ```
 
-A classe `FirebaseConfig.criarCliente()` carrega a identidade autenticada pelo ambiente. Se a sua configuração exigir um arquivo JSON de conta de serviço, aponte `GOOGLE_APPLICATION_CREDENTIALS` para um arquivo **fora do repositório**. Nunca publique esse JSON nem o envie para colegas. Credenciais privilegiadas podem contornar as regras comuns de segurança do Firestore.
+Depois de `gcloud auth application-default login`, execute a classe `br.edu.urnacidada.config.TesteConexaoFirestore` para validar apenas a leitura. A classe `FirebaseConfig.criarCliente()` carrega a identidade autenticada pelo ambiente. Se a sua configuração exigir um arquivo JSON de conta de serviço, aponte `GOOGLE_APPLICATION_CREDENTIALS` para um arquivo **fora do repositório**. Nunca publique esse JSON nem o envie para colegas. Credenciais privilegiadas podem contornar as regras comuns de segurança do Firestore.
 
 ## 3. Estrutura dos documentos
 
