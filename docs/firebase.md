@@ -71,15 +71,17 @@ Se a gravação falhar, a transação não deve adicionar resultados parciais. I
 
 ## 6. Como testar
 
-- `mvn clean test`: executa os testes unitários sem depender de credenciais Firebase.
-- Para testar a integração, configure o Firestore **Emulator** ou um projeto de testes isolado. Verifique uma sessão completa, duas categorias contabilizadas, repetição idempotente e leitura dos resultados.
-- Nunca execute testes destrutivos no banco de uma oficina real.
-- Antes de habilitar a persistência na apresentação, verifique conexão, autorização, tratamento de erros e tempo de resposta.
+- `mvn clean test`: executa os testes unitários sem depender do Firebase.
+- Para testar também a integração, instale o Firebase CLI e inicie o emulador em um terminal:
+  `firebase emulators:start --only firestore --project demo-urna-cidada`
+- Em outro terminal PowerShell, na pasta do projeto, defina `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080` e `FIRESTORE_PROJECT_ID=demo-urna-cidada`, depois execute `mvn --batch-mode clean verify`. A classe `FirebaseConfig` usa credenciais fictícias quando o emulador está configurado; não é necessário ADC nem acesso à nuvem.
+- O workflow do GitHub inicia o emulador e executa `mvn clean verify` em cada atualização da branch.
+- Os testes de integração verificam uma sessão completa, a contagem dos dois votos, o reenvio idempotente e a rejeição de sessão incompleta.
+- O emulador não valida permissões nem todos os comportamentos de concorrência da produção. Faça uma validação controlada no projeto de teste antes da demonstração, nunca no banco da oficina.
 
 ## 7. Próximos passos com o grupo
 
-- Validar a persistência com o emulador ou projeto Firebase de teste, incluindo falhas e reenvio.
-- Adicionar testes automatizados de integração para a transação e a consulta de resultados.
+- Validar conexão, permissões e tratamento de falhas em um projeto Firebase de teste.
 - Revisar as permissões ADC e manter acesso mínimo na máquina administrativa.
 - Antes de distribuir para participantes, substituir o acesso direto por um backend autenticado.
 
