@@ -137,3 +137,17 @@ mostra erro, em vez de substituir resultados válidos por zeros.
 A leitura por SDK Java usa as credenciais ADC do administrador e não deve ser
 distribuída a alunos ou público. A aplicação não oferece votação nem faz
 gravações no Firebase.
+
+### Melhorias visuais do painel
+
+O painel apresenta cartões separados de total, brancos e nulos, com colunas
+numéricas alinhadas à direita e espaçamento interno para evitar valores grudados.
+As colunas "Votos" (inteiros) e "Percentual" (números decimais) continuam
+numéricas internamente para permitir ordenação correta pelos cabeçalhos.
+A interface usa linhas alternadas e preserva os valores anteriores se a
+atualização do Firestore falhar.
+
+Para conferir a apresentação visual, execute `ApuracaoMain`, alterne entre
+as abas, clique em **ATUALIZAR RESULTADOS** e ordene por **Votos** ou
+**Percentual**. Teste também uma janela redimensionada para verificar se há
+espaçamento adequado.
