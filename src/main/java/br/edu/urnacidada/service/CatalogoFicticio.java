@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Cadastro único de candidaturas e partidos inteiramente fictícios.
+ * Cadastro único de candidaturas satíricas e legendas fictícias.
  *
  * Para adicionar uma candidatura: crie o partido (se necessário), adicione uma
  * Ficha à lista FICHAS e coloque seu PNG em src/main/resources/candidatos.
@@ -18,7 +18,7 @@ public final class CatalogoFicticio {
     private static final Partido ILHA = new Partido("90", "Partido ILHA");
     private static final Partido DEMONIO = new Partido("66", "Partido Demoniaco");
 
-    private static final List<Partido> PARTIDOS = List.of(TEEN,RACIONAISMC,ILHA,DEMONIO);
+    private static final List<Partido> PARTIDOS = List.of(TEEN, RACIONAISMC, ILHA, DEMONIO);
 
     public record Ficha(Candidato candidato, String fotoRecurso) {
         public Ficha {

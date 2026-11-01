@@ -10,7 +10,7 @@ class UrnaControllerTest {
     @Test void fluxoCompletoComDoisCargos() {
         MemoriaVotoRepository repository = new MemoriaVotoRepository();
         UrnaController urna = new UrnaController(CatalogoFicticio.criarServico(), repository);
-        for (char c : "8101".toCharArray()) urna.digitar(c);
+        for (char c : "6767".toCharArray()) urna.digitar(c);
         assertTrue(urna.confirmar());
         assertEquals(Cargo.PRESIDENTE, urna.getCargoAtual());
         urna.votarBranco();
@@ -43,7 +43,7 @@ class UrnaControllerTest {
         urna.votarBranco();
         urna.corrigir();
         assertFalse(urna.isBrancoSelecionado());
-        for (char c : "8202".toCharArray()) urna.digitar(c);
+        for (char c : "1069".toCharArray()) urna.digitar(c);
         assertTrue(urna.confirmar());
         urna.corrigir();
         assertEquals(Cargo.PRESIDENTE, urna.getCargoAtual());
@@ -52,9 +52,8 @@ class UrnaControllerTest {
     @Test void votoIncompletoNaoAvanca() {
         UrnaController urna = new UrnaController(
                 CatalogoFicticio.criarServico(), new MemoriaVotoRepository());
-        urna.digitar('8');
+        urna.digitar('6');
         assertFalse(urna.confirmar());
         assertEquals(Cargo.DEPUTADO_FEDERAL, urna.getCargoAtual());
     }
 }
-
