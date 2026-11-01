@@ -7,24 +7,38 @@
   <version>0.1.0</version>
   <name>Urna Cidadã</name>
   <description>Simulador educativo de votação com Java Swing e POO</description>
+
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.version>5.11.4</junit.version>
+    <logback.version>1.5.15</logback.version>
   </properties>
+
   <dependencies>
+    <!-- Testes -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- Firestore -->
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-firestore</artifactId>
       <version>3.49.0</version>
     </dependency>
+
+    <!-- Implementação de Logging (resolve o SLF4J) -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+    </dependency>
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -32,21 +46,39 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.13.0</version>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.2</version>
-        <configuration><useModulePath>false</useModulePath></configuration>
+        <configuration>
+          <useModulePath>false</useModulePath>
+          <argLine>--enable-native-access=ALL-UNNAMED</argLine>
+        </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.4.2</version>
         <configuration>
-          <archive><manifest><mainClass>br.edu.urnacidada.Main</mainClass></manifest></archive>
+          <archive>
+            <manifest>
+              <mainClass>br.edu.urnacidada.Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <!-- Plugin para rodar via mvn exec:java -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.5.0</version>
+        <configuration>
+          <mainClass>br.edu.urnacidada.Main</mainClass>
         </configuration>
       </plugin>
     </plugins>
   </build>
 </project>
-
