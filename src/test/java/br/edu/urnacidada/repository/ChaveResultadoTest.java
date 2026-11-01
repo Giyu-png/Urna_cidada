@@ -9,13 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ChaveResultadoTest {
     @Test void criaChaveParaVotoNominal() {
-        assertEquals("DEPUTADO_FEDERAL_NOMINAL_8101",
-                ChaveResultado.doVoto(Voto.nominal(Cargo.DEPUTADO_FEDERAL, "8101")));
+        assertEquals("DEPUTADO_FEDERAL_NOMINAL_6767",
+                ChaveResultado.doVoto(Voto.nominal(Cargo.DEPUTADO_FEDERAL, "6767")));
     }
 
     @Test void criaChaveParaVotoDeLegenda() {
-        assertEquals("DEPUTADO_FEDERAL_LEGENDA_81",
-                ChaveResultado.doVoto(Voto.legenda(Cargo.DEPUTADO_FEDERAL, "81")));
+        assertEquals("DEPUTADO_FEDERAL_LEGENDA_67",
+                ChaveResultado.doVoto(Voto.legenda(Cargo.DEPUTADO_FEDERAL, "67")));
     }
 
     @Test void criaChaveParaVotoBranco() {

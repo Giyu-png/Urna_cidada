@@ -1,24 +1,20 @@
-# Fotografias fictícias dos candidatos
+# Imagens dos candidatos — Urna Cidadã
 
-Coloque as imagens PNG nesta pasta. Não inclua fotos de pessoas reais sem
-permissão para uso no projeto educativo.
+A pasta contém imagens usadas em **candidaturas satíricas**, inclusive memes, personagens e referências a pessoas conhecidas. Nenhum personagem ou pessoa retratada é candidato real por causa deste projeto. Confiram a adequação e os direitos de uso das imagens antes de uma apresentação pública.
 
-Os nomes esperados pelos cadastros atuais em
-`src/main/java/br/edu/urnacidada/service/CatalogoFicticio.java` são:
+O arquivo `src/main/java/br/edu/urnacidada/service/CatalogoFicticio.java` associa cada candidatura aos PNGs abaixo:
 
-- `deputado_8101.png` — Lia Inventora
-- `deputado_8202.png` — Caio Explorador
-- `presidente_81.png` — Nina Aurora
-- `presidente_82.png` — Ravi Horizonte
+| Número | Cargo | Nome no simulador | Arquivo |
+| --- | --- | --- | --- |
+| 67 | Presidente | Coloridinho | `coloridinho.png` |
+| 6767 | Deputado federal | Emily Vik | `emily_vik.png` |
+| 10 | Presidente | Gato Nihao | `gato_nihao.png` |
+| 1069 | Deputado federal | Gato Babao | `Gato_Babao.png` |
+| 90 | Presidente | P Diddy | `pdiddy.png` |
+| 9022 | Deputado federal | Elon Musk | `elon_musk.png` |
+| 66 | Presidente | IT a Coisa | `IT.png` |
+| 6666 | Deputado federal | cthulhu | `cutulo.png` |
 
-A fotografia é carregada a partir do classpath Maven e exibida na urna
-e na apuração. Se o arquivo não existir ou não puder ser aberto, o programa
-mostra uma silhueta neutra (sem erro na votação).
+Os nomes dos arquivos diferenciam maiúsculas de minúsculas em alguns sistemas. A urna e a apuração carregam as fotos localmente pelo classpath do Maven, sem conexão com internet. Se um arquivo estiver ausente, aparece uma silhueta neutra.
 
-Recomendação: fotos em formato retrato, tamanho 300 x 400 px ou maior,
-sem textos adicionais.
-
-Para incluir um novo candidato, insira uma `Ficha` na lista `FICHAS`
-de `CatalogoFicticio.java` e configure a rota de seu arquivo PNG.
-O mesmo cadastro alimenta os dois aplicativos; mantenha números distintos
-por cargo e use partidos/legendas fictícias.
+Para adicionar outra candidatura, inclua sua `Ficha` em `CatalogoFicticio.java`, defina seu número e partido fictício e coloque o PNG correspondente nesta pasta.

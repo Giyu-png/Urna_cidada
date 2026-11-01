@@ -1,31 +1,53 @@
-# Arquitetura — versão 0.1
+# Arquitetura do simulador
 
 ```text
-Swing: JanelaPrincipal, TelaInicial, TelaUrna, TelaFim
-   | ações
-UrnaController (estado de digitação e sequência)
-   | consulta regras                 | ao finalizar sessão
-VotacaoService                      VotoRepository (interface)
-   |                                   |
-model/*                              MemoriaVotoRepository
+Aplicação 1: br.edu.urnacidada.Main (Java Swing)
+  TelaInicial -> TelaUrna -> TelaSincronizacao -> TelaFim
+                     |
+               UrnaController
+                     |
+          VotacaoService / model
+                     |
+         MemoriaVotoRepository
+                     |
+          (sessão concluída)
+                     |
+            SwingWorker (UI)
+                     |
+       FirestoreVotoRepository
+                     |
+          Cloud Firestore (IAM/ADC)
+
+Aplicação 2: br.edu.urnacidada.apuracao.ApuracaoMain
+       JanelaApuracao (SwingWorker)
+                     |
+       FirestoreVotoRepository (leitura)
+                     |
+          Cloud Firestore
+
+Catálogo único: service/CatalogoFicticio
+   | candidatos, partidos e caminhos das fotos
+   +----> urna e apuração
+            imagens locais em src/main/resources/candidatos
 ```
 
-## Separação de responsabilidades
-- **model**: Cargo, Partido, Candidato (abstrata), subclasses proporcionais e majoritárias, Voto imutável e SessaoVotacao.
-- **service**: valida e classifica números, busca candidaturas e retorna descrições.
-- **controller**: mantém dígitos e voto branco em curso, confirma e avança entre os cargos.
-- **repository**: contrato de persistência independente da implementação.
-- **view**: telas Swing; não executam regras de classificação nem conhecem detalhes de armazenamento.
+## Responsabilidades
 
-## Quatro pilares de POO
-- **Encapsulamento:** atributos privados e operações controladas em SessaoVotacao e UrnaController.
-- **Herança:** CandidatoProporcional e CandidatoMajoritario especializam Candidato.
-- **Polimorfismo:** getDescricao() apresenta detalhes diferentes conforme o candidato.
-- **Abstração:** VotoRepository separa persistência da regra de negócio.
+- `model`: cargos, candidatos, partidos, votos e sessões.
+- `service`: catálogo central e regras de votação; `ApuracaoService` encapsula a etapa de registro local.
+- `controller`: estado de digitação e avanço entre cargos.
+- `repository`: contrato de persistência e implementações em memória/Firestore.
+- `view`: interfaces Swing, fotos, sincronização assíncrona.
+- `apuracao`: painel independente de consulta de contagens agregadas.
+- `config`: cliente Google Cloud Firestore a partir do ambiente.
 
-## Limitações conhecidas
-- Apenas dois cargos, votação fictícia e regras reduzidas.
-- Dados são mantidos somente enquanto o aplicativo estiver aberto.
-- Uma futura integração Firestore deve registrar uma sessão atomicamente e impedir duplicidade.
-- Um cliente desktop distribuído **não pode** incorporar credenciais administrativas Firebase.
+## Pilares de POO
 
+- Encapsulamento em entidades e controlador.
+- Herança: `CandidatoProporcional` e `CandidatoMajoritario`.
+- Polimorfismo em `getDescricao()`.
+- Abstração pelo contrato `VotoRepository`.
+
+## Segurança e limitações
+
+O código do servidor Firestore executa no desktop **apenas em ambientes supervisionados** com credenciais próprias e IAM. Não existem credenciais administrativas no repositório. Os documentos registram contagens e marcadores aleatórios de sessão, não o par de votos de cada pessoa. A apuração é somente leitura. O jogo não implementa eleição oficial nem regras completas de totalização.

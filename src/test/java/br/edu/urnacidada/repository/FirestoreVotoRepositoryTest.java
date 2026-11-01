@@ -36,22 +36,22 @@ class FirestoreVotoRepositoryTest {
     @Test
     void registraOsDoisVotosEReenvioDaMesmaSessaoNaoDuplica() {
         SessaoVotacao sessao = new SessaoVotacao();
-        sessao.registrarVoto(Voto.nominal(Cargo.DEPUTADO_FEDERAL, "8101"));
-        sessao.registrarVoto(Voto.nominal(Cargo.PRESIDENTE, "81"));
+        sessao.registrarVoto(Voto.nominal(Cargo.DEPUTADO_FEDERAL, "6767"));
+        sessao.registrarVoto(Voto.nominal(Cargo.PRESIDENTE, "67"));
 
         repositorio.registrarSessao(sessao);
         repositorio.registrarSessao(sessao);
 
         assertEquals(Map.of(
-                "DEPUTADO_FEDERAL_NOMINAL_8101", 1L,
-                "PRESIDENTE_NOMINAL_81", 1L
+                "DEPUTADO_FEDERAL_NOMINAL_6767", 1L,
+                "PRESIDENTE_NOMINAL_67", 1L
         ), repositorio.consultarResultados());
     }
 
     @Test
     void rejeitaSessaoIncompletaSemGravarResultados() {
         SessaoVotacao sessao = new SessaoVotacao();
-        sessao.registrarVoto(Voto.nominal(Cargo.DEPUTADO_FEDERAL, "8101"));
+        sessao.registrarVoto(Voto.nominal(Cargo.DEPUTADO_FEDERAL, "6767"));
 
         assertThrows(IllegalArgumentException.class,
                 () -> repositorio.registrarSessao(sessao));
