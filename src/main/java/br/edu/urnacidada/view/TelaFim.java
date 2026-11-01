@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 public final class TelaFim extends JPanel {
-    public TelaFim(Runnable novaSimulacao) {
+    public TelaFim(Runnable novaSimulacao, boolean confirmadoNaNuvem) {
         setBackground(Tema.FUNDO);
         setLayout(new GridBagLayout());
         JPanel painel = new JPanel();
@@ -28,7 +28,10 @@ public final class TelaFim extends JPanel {
         painel.add(mensagem);
         painel.add(Box.createVerticalStrut(12));
 
-        JLabel aviso = Tema.texto("Seus votos fictícios foram contabilizados apenas nesta execução.", 15, false);
+        JLabel aviso = Tema.texto(confirmadoNaNuvem
+                ? "Votos fictícios contabilizados no Cloud Firestore."
+                : "Votação local concluída; não foi confirmada a gravação na nuvem.",
+                15, false);
         aviso.setAlignmentX(Component.CENTER_ALIGNMENT);
         painel.add(aviso);
         painel.add(Box.createVerticalStrut(32));
@@ -40,4 +43,3 @@ public final class TelaFim extends JPanel {
         add(painel);
     }
 }
-

@@ -2,6 +2,7 @@ package br.edu.urnacidada.controller;
 
 import br.edu.urnacidada.model.*;
 import br.edu.urnacidada.repository.VotoRepository;
+import br.edu.urnacidada.service.ApuracaoService;
 import br.edu.urnacidada.service.VotacaoService;
 import java.util.Objects;
 
@@ -22,6 +23,14 @@ public final class UrnaController {
     public String getDigitos() { return digitos.toString(); }
     public boolean isBrancoSelecionado() { return brancoSelecionado; }
     public boolean estaConcluida() { return sessao.estaConcluida(); }
+
+    /** Devolve uma sessão concluída para sincronização em segundo plano. */
+    public SessaoVotacao getSessaoConcluida() {
+        if (!sessao.estaConcluida()) {
+            throw new IllegalStateException("A sessão ainda não foi concluída.");
+        }
+        return sessao;
+    }
     public String getDescricaoEscolha() {
         if (estaConcluida()) return "FIM DA SIMULAÇÃO";
         return service.descreverEscolha(getCargoAtual(), getDigitos(), brancoSelecionado);
@@ -50,17 +59,22 @@ public final class UrnaController {
 
     /**
      * Retorna false quando a escolha ainda estiver incompleta.
-     * Ao finalizar os dois cargos, salva a sessão no repositório configurado.
+     * Ao finalizar os dois cargos, registra a sessão uma única vez.
      */
     public boolean confirmar() {
         if (estaConcluida()) throw new IllegalStateException("Sessão encerrada.");
         Voto voto = service.classificarVoto(getCargoAtual(), getDigitos(), brancoSelecionado);
         if (voto == null) return false;
+
         sessao.registrarVoto(voto);
         digitos.setLength(0);
         brancoSelecionado = false;
-        if (sessao.estaConcluida()) repository.registrarSessao(sessao);
+
+        if (sessao.estaConcluida()) {
+            ApuracaoService apuracaoService = new ApuracaoService(repository);
+            apuracaoService.processarEEinviarContagem(sessao);
+        }
+
         return true;
     }
 }
-

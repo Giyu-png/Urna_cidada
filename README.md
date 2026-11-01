@@ -8,7 +8,7 @@ Simulador **educativo e apartidário** de votação para dois cargos (deputado f
 
 - Java 21, Java Swing e Maven.
 - JUnit 5 para testes das regras de negócio.
-- Persistência **em memória** nesta primeira versão; integração com Cloud Firestore será implementada posteriormente.
+- Persistência local em memória e sincronização com Cloud Firestore na branch de integração, via `SwingWorker` e transações idempotentes.
 
 ## Como executar
 
@@ -20,12 +20,25 @@ mvn package
 java -jar target/urna-cidada-0.1.0.jar
 ```
 
+O JAR gerado inclui as dependências necessárias para a sincronização com o Firestore. O acesso à nuvem ainda requer ADC configuradas no computador.
+
+## Cadastro de candidatos e fotos
+
+Os candidatos fictícios são cadastrados **somente** em
+`src/main/java/br/edu/urnacidada/service/CatalogoFicticio.java`. O mesmo
+catálogo alimenta a urna e a apuração. Os PNGs opcionais ficam em
+`src/main/resources/candidatos/`; sem arquivos de imagem, aparece uma
+silhueta neutra. Leia o `LEIA-ME.md` da pasta de fotos.
+
+Para abrir a urna execute `br.edu.urnacidada.Main`; para abrir a
+apuração separada, execute `br.edu.urnacidada.apuracao.ApuracaoMain`.
+
 ## Como testar a simulação
 
 - **Deputado federal:** digite `8101` ou `8202` para votos nominais, ou `81` / `82` para votos de legenda.
 - **Presidente:** digite `81` ou `82`.
 - Use **BRANCO**, **CORRIGE** e **CONFIRMA**. Números completos não cadastrados podem ser confirmados como voto nulo.
-- Após o segundo cargo, aparece a tela de encerramento.
+- Após o segundo cargo, a interface tenta sincronizar a sessão com o Firestore sem travar o Swing. Se falhar, permite reenvio ou continuação local com aviso explícito.
 
 Os números e nomes são **exemplos fictícios**, sem vínculo com partidos ou pessoas reais. Nenhum voto real é registrado.
 
@@ -35,11 +48,11 @@ O código separa `model` (entidades), `service` (regras eleitorais simplificadas
 
 ## Segurança e privacidade
 
-Esta versão não solicita dados pessoais. **Nunca publique credenciais do Firebase no GitHub**, nem as distribua em aplicativos desktop. A persistência em nuvem e sua configuração segura são trabalho de uma etapa posterior.
+Esta versão não solicita dados pessoais. **Nunca publique credenciais do Firebase no GitHub**, nem as distribua nos computadores dos participantes. O acesso direto ao Firestore usa ADC exclusivamente na máquina supervisionada do desenvolvedor; para distribuir o sistema, utilize um backend com autenticação. A gravação na interface é feita na simulação de demonstração `demonstracao-interface-2026`.
 
 ## Próximos passos
 
-- Integrar o Cloud Firestore com uma estratégia segura para demonstração.
+- Validar a interface conectada ao Firestore em uma máquina de demonstração e planejar o backend para distribuição.
 - Adicionar materiais educativos sobre desinformação e deepfakes.
 - Organizar a oficina, questionários antes/depois e relatório extensionista.
 

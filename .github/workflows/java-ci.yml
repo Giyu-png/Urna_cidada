@@ -7,6 +7,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      FIRESTORE_PROJECT_ID: demo-urna-cidada
     steps:
       - uses: actions/checkout@v4
       - name: Configurar Java 21
@@ -15,6 +17,11 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - name: Compilar e executar testes
-        run: mvn --batch-mode clean verify
-
+      - name: Configurar Node.js para o Firebase Emulator
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar Firebase CLI
+        run: npm install --global firebase-tools
+      - name: Compilar, executar testes e validar Firestore no emulador
+        run: firebase emulators:exec --only firestore --project demo-urna-cidada "mvn --batch-mode clean verify"
