@@ -6,17 +6,19 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Cadastro único de candidaturas e partidos inteiramente fictícios.
+ * Cadastro único de candidaturas satíricas e legendas fictícias.
  *
  * Para adicionar uma candidatura: crie o partido (se necessário), adicione uma
  * Ficha à lista FICHAS e coloque seu PNG em src/main/resources/candidatos.
  * A urna e a apuração usarão automaticamente este mesmo catálogo.
  */
 public final class CatalogoFicticio {
-    private static final Partido AURORA = new Partido("81", "Equipe Aurora");
-    private static final Partido HORIZONTE = new Partido("82", "Equipe Horizonte");
+    private static final Partido TEEN = new Partido("67", "Partido Teen");
+    private static final Partido RACIONAISMC = new Partido("10", "Partido RacionaisMC");
+    private static final Partido ILHA = new Partido("90", "Partido ILHA");
+    private static final Partido DEMONIO = new Partido("66", "Partido Demoniaco");
 
-    private static final List<Partido> PARTIDOS = List.of(AURORA, HORIZONTE);
+    private static final List<Partido> PARTIDOS = List.of(TEEN, RACIONAISMC, ILHA, DEMONIO);
 
     public record Ficha(Candidato candidato, String fotoRecurso) {
         public Ficha {
@@ -29,14 +31,25 @@ public final class CatalogoFicticio {
     }
 
     private static final List<Ficha> FICHAS = List.of(
-        new Ficha(new CandidatoProporcional("8101", "Lia Inventora", AURORA),
-                "/candidatos/deputado_8101.png"),
-        new Ficha(new CandidatoProporcional("8202", "Caio Explorador", HORIZONTE),
-                "/candidatos/deputado_8202.png"),
-        new Ficha(new CandidatoMajoritario("81", "Nina Aurora", "Teo Amanhecer", AURORA),
-                "/candidatos/presidente_81.png"),
-        new Ficha(new CandidatoMajoritario("82", "Ravi Horizonte", "Bia do Amanhã", HORIZONTE),
-                "/candidatos/presidente_82.png")
+            new Ficha(new CandidatoMajoritario("67", "Coloridinho", "Hulk BR", TEEN),
+                "/candidatos/coloridinho.png"),
+            new Ficha(new CandidatoProporcional("6767", "Emily Vik", TEEN),
+                    "/candidatos/emily_vik.png"),
+            new Ficha(new CandidatoMajoritario("10", "Gato Nihao", "Lobo Pidao", RACIONAISMC),
+                    "/candidatos/gato_nihao.png"),
+            new Ficha(new CandidatoProporcional("1069", "Gato Babao", RACIONAISMC),
+                    "/candidatos/Gato_Babao.png"),
+            new Ficha(new CandidatoMajoritario("90", "P Diddy", "Justin Bieber", ILHA),
+                    "/candidatos/pdiddy.png"),
+            new Ficha(new CandidatoProporcional("9022", "Elon Musk", ILHA),
+                    "/candidatos/elon_musk.png"),
+            new Ficha(new CandidatoMajoritario("66", "IT a Coisa", "Belzebu", DEMONIO),
+                    "/candidatos/IT.png"),
+            new Ficha(new CandidatoProporcional("6666", "cthulhu", DEMONIO),
+                    "/candidatos/cutulo.png")
+
+
+
     );
 
     private CatalogoFicticio() {}

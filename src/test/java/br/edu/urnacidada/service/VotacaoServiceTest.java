@@ -8,19 +8,20 @@ class VotacaoServiceTest {
     private final VotacaoService service = CatalogoFicticio.criarServico();
 
     @Test void identificaVotoNominalProporcional() {
-        Voto voto = service.classificarVoto(Cargo.DEPUTADO_FEDERAL, "8101", false);
+        Voto voto = service.classificarVoto(Cargo.DEPUTADO_FEDERAL, "6767", false);
         assertEquals(TipoVoto.NOMINAL, voto.getTipo());
-        assertEquals("8101", voto.getReferencia());
+        assertEquals("6767", voto.getReferencia());
     }
 
     @Test void identificaVotoDeLegendaProporcional() {
-        Voto voto = service.classificarVoto(Cargo.DEPUTADO_FEDERAL, "81", false);
+        Voto voto = service.classificarVoto(Cargo.DEPUTADO_FEDERAL, "67", false);
         assertEquals(TipoVoto.LEGENDA, voto.getTipo());
+        assertEquals("67", voto.getReferencia());
     }
 
     @Test void identificaVotoNominalMajoritario() {
         assertEquals(TipoVoto.NOMINAL,
-                service.classificarVoto(Cargo.PRESIDENTE, "82", false).getTipo());
+                service.classificarVoto(Cargo.PRESIDENTE, "10", false).getTipo());
     }
 
     @Test void registraVotoBranco() {
@@ -34,8 +35,7 @@ class VotacaoServiceTest {
     }
 
     @Test void naoConfirmaNumerosIncompletos() {
-        assertNull(service.classificarVoto(Cargo.DEPUTADO_FEDERAL, "8", false));
+        assertNull(service.classificarVoto(Cargo.DEPUTADO_FEDERAL, "6", false));
         assertNull(service.classificarVoto(Cargo.PRESIDENTE, "", false));
     }
 }
-
