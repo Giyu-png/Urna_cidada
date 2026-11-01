@@ -15,7 +15,7 @@ import java.util.Optional;
 public final class CatalogoFicticio {
     private static final Partido TEEN = new Partido("67", "Partido Teen");
     private static final Partido RACIONAISMC = new Partido("10", "Partido RacionaisMC");
-    private static final Partido ILHA = new Partido("90", "ILHA");
+    private static final Partido ILHA = new Partido("90", "Partido ILHA");
     private static final Partido DEMONIO = new Partido("66", "Partido Demoniaco");
 
     private static final List<Partido> PARTIDOS = List.of(TEEN,RACIONAISMC,ILHA,DEMONIO);
