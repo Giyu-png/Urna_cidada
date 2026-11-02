@@ -13,8 +13,6 @@ Projeto acadêmico de extensão em **Programação Orientada a Objetos (POO)**: 
 - **Painel de apuração separado:** totais por cargo, votos, percentuais, miniaturas e indicação da candidatura **mais votada até o momento**; somente leitura do Firestore. Não declara eleitos e não implementa o cálculo de cadeiras.
 - **Testes JUnit e Firestore Emulator** executados no pipeline de integração contínua do GitHub.
 
-Este repositório contém a urna e a apuração. **Não inclui um assistente LLM nem um minigame de desinformação.**
-
 ## Tecnologias
 
 Java 21, Java Swing, Maven, JUnit 5, Google Cloud Firestore (SDK Java) e Firebase Emulator para testes automatizados.
