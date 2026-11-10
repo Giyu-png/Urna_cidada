@@ -1,1 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Desinformação: aprenda a identificar</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f8fafc; --card:#ffffff; --txt:#0f172a; --mut:#64748b; --line:#e2e8f0; --soft:#f1f5f9; --dots:#cbd5e1; }
+  html.dark { --bg:#020617; --card:#0f172a; --txt:#e2e8f0; --mut:#94a3b8; --line:#1e293b; --soft:#1e293b; --dots:#334155; }
+  body { font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--txt); transition:background .4s,color .4s; }
+  .card { background:var(--card); border:1px solid var(--line); }
+  .mut { color:var(--mut); }
+  .soft { background:var(--soft); }
+  .txt { color:var(--txt); }
+  .dica { border-left:4px solid #8b5cf6; }
+  .hero-bg { background:radial-gradient(circle at 12% 18%,#3b82f6 0,transparent 38%),radial-gradient(circle at 88% 82%,#8b5cf6 0,transparent 40%),#0f172a; }
+  .pontos { background-image:radial-gradient(var(--dots) 1px,transparent 1px); background-size:18px 18px; }
 
+  section[data-view] { display:none; }
+  section[data-view].ativa { display:block; animation:surgir .4s ease; }
+  @keyframes surgir { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  .nav-btn.ativo { background:#1d4ed8; color:#fff; }
+
+  .reveal { opacity:0; transform:translateY(24px); transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1); transition-delay:var(--atraso,0ms); }
+  .reveal.visivel { opacity:1; transform:none; }
+  .item { opacity:0; transform:translateX(-16px); transition:opacity .5s ease,transform .5s ease; transition-delay:var(--atraso,0ms); }
+  .visivel .item { opacity:1; transform:none; }
+
+  .blob { position:absolute; border-radius:9999px; filter:blur(60px); opacity:.45; animation:flutuar 12s ease-in-out infinite alternate; pointer-events:none; }
+  @keyframes flutuar { from { transform:translate(0,0); } to { transform:translate(40px,-30px) scale(1.15); } }
+  .palavra { display:inline-block; opacity:0; transform:translateY(40px) rotateX(-70deg); transform-origin:bottom center; animation:palavra-entra .9s cubic-bezier(.2,.8,.2,1) forwards; animation-delay:calc(var(--i)*110ms + 200ms); }
+  @keyframes palavra-entra { to { opacity:1; transform:none; } }
+  .brilho { background:linear-gradient(90deg,#7dd3fc,#c4b5fd,#7dd3fc); background-size:200% auto; -webkit-background-clip:text; background-clip:text; color:transparent; animation:brilho 4s linear infinite; }
+  @keyframes brilho { to { background-position:200% center; } }
+  .sublinhado { position:relative; }
+  .sublinhado::after { content:""; position:absolute; left:0; right:0; bottom:.02em; height:.14em; border-radius:9999px; background:linear-gradient(90deg,#38bdf8,#a78bfa); transform:scaleX(0); transform-origin:left; animation:sublinha 1s ease forwards; animation-delay:1.1s; }
+  @keyframes sublinha { to { transform:scaleX(1); } }
+
+  .num { animation:respirar 2.4s ease-in-out infinite; animation-delay:calc(var(--i,0)*.3s); }
+  @keyframes respirar { 0%,100% { box-shadow:0 0 0 0 rgba(var(--rgb),.45); } 50% { box-shadow:0 0 0 10px rgba(var(--rgb),0); } }
+
+  .plus { display:inline-block; transition:transform .4s cubic-bezier(.2,.8,.2,1),color .3s; }
+  details[open] .plus { transform:rotate(135deg); color:#7c3aed; }
+  html.dark details[open] .plus { color:#c4b5fd; }
+  details[open] .sub { display:none; }
+  details[open] { box-shadow:0 20px 40px -18px rgba(124,58,237,.35); }
+  .corpo { animation:abrir .45s ease; }
+  @keyframes abrir { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
+
+  .icone { display:inline-block; }
+  article:hover .icone { animation:balanco .6s ease; }
+  @keyframes balanco { 0%,100% { transform:rotate(0); } 25% { transform:rotate(-10deg) scale(1.1); } 75% { transform:rotate(8deg) scale(1.05); } }
+
+  @media (prefers-reduced-motion:reduce) {
+    *,*::before,*::after { animation:none !important; transition:none !important; }
+    .reveal,.item { opacity:1; transform:none; }
+    .palavra { opacity:1; transform:none; }
+    .sublinhado::after { transform:scaleX(1); }
+  }
+</style>
+</head>
+<body class="antialiased">
+
+<header class="hero-bg relative overflow-hidden text-white">
+  <div class="blob -left-10 top-10 h-64 w-64 bg-sky-500"></div>
+  <div class="blob -right-10 bottom-0 h-72 w-72 bg-violet-500"></div>
+  <div class="relative mx-auto max-w-5xl px-5 pb-20 pt-10 sm:pt-16">
+    <p class="reveal visivel inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold tracking-wide ring-1 ring-white/20">
+      <span class="h-2 w-2 animate-pulse rounded-full bg-emerald-400"></span> PROJETO DE COMPUTAÇÃO · INFORMAÇÃO E ELEIÇÕES
+    </p>
+    <h1 class="mt-6 max-w-3xl text-4xl font-extrabold leading-[1.05] sm:text-6xl" style="perspective:800px"><span class="palavra" style="--i:0">Nem</span> <span class="palavra" style="--i:1">tudo</span> <span class="palavra" style="--i:2">que</span> <span class="palavra sublinhado" style="--i:3"><span class="brilho">viraliza</span></span> <span class="palavra" style="--i:4">é</span> <span class="palavra" style="--i:5">verdade.</span></h1>
+    <p class="reveal visivel mt-5 max-w-2xl text-base text-slate-300 sm:text-lg" style="--atraso:240ms">Entenda como a desinformação se espalha, aprenda a reconhecer manipulações por IA, saiba onde checar e teste seu olhar.</p>
+  </div>
+</header>
+
+<nav class="sticky top-0 z-10 -mt-8 px-3 sm:px-4">
+  <div class="card mx-auto flex max-w-xl items-center gap-1 rounded-2xl p-1.5 shadow-xl">
+    <button class="nav-btn ativo mut min-w-0 flex-1 whitespace-nowrap rounded-xl px-1 py-3 text-[11px] font-semibold transition hover:bg-slate-500/10 sm:px-3 sm:text-sm" data-alvo="entenda">Entenda</button>
+    <button class="nav-btn mut min-w-0 flex-1 whitespace-nowrap rounded-xl px-1 py-3 text-[11px] font-semibold transition hover:bg-slate-500/10 sm:px-3 sm:text-sm" data-alvo="deepfake">Deepfakes</button>
+    <button class="nav-btn mut min-w-0 flex-1 whitespace-nowrap rounded-xl px-1 py-3 text-[11px] font-semibold transition hover:bg-slate-500/10 sm:px-3 sm:text-sm" data-alvo="fontes">Checagem</button>
+    <button class="nav-btn mut min-w-0 flex-1 whitespace-nowrap rounded-xl px-1 py-3 text-[11px] font-semibold transition hover:bg-slate-500/10 sm:px-3 sm:text-sm" data-alvo="quiz">Quiz</button>
+    <button id="tema" aria-label="Alternar tema claro e escuro" class="shrink-0 rounded-xl px-2.5 py-3 text-base ring-1 ring-[var(--line)] transition hover:bg-slate-500/10">🌙</button>
+  </div>
+</nav>
+
+<main class="mx-auto max-w-5xl px-5 py-12 sm:py-16">
+
+  <!-- 1 · ENTENDA -->
+  <section data-view="entenda" class="ativa space-y-16">
+    <div>
+      <p class="reveal text-sm font-bold uppercase tracking-widest text-blue-500">Conceitos</p>
+      <h2 class="reveal mt-2 text-3xl font-extrabold sm:text-4xl" style="--atraso:80ms">Três termos, três ideias diferentes</h2>
+      <p class="reveal mt-3 max-w-2xl mut" style="--atraso:120ms">Misturar esses termos é comum, mas cada um pede uma resposta diferente de quem lê.</p>
+      <div class="mt-8 grid gap-5 md:grid-cols-3">
+        <article class="reveal card group relative overflow-hidden rounded-3xl p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl" style="--atraso:160ms">
+          <div class="absolute inset-x-0 top-0 h-1.5 bg-sky-500"></div>
+          <div class="icone flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500/15 text-2xl">❓</div>
+          <h3 class="mt-5 text-lg font-bold">Informação incorreta</h3>
+          <p class="mt-2 text-sm leading-relaxed mut">Erro sem intenção de enganar. Quem compartilha acredita que é verdade e, ao perceber o engano, deve corrigir o que espalhou.</p>
+        </article>
+        <article class="reveal card group relative overflow-hidden rounded-3xl p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl" style="--atraso:260ms">
+          <div class="absolute inset-x-0 top-0 h-1.5 bg-rose-500"></div>
+          <div class="icone flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-500/15 text-2xl">🎯</div>
+          <h3 class="mt-5 text-lg font-bold">Desinformação</h3>
+          <p class="mt-2 text-sm leading-relaxed mut">Conteúdo falso, enganoso ou fora de contexto, <strong class="txt">criado ou divulgado para enganar</strong>, influenciar ou causar dano.</p>
+        </article>
+        <article class="reveal card group relative overflow-hidden rounded-3xl p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl" style="--atraso:360ms">
+          <div class="absolute inset-x-0 top-0 h-1.5 bg-amber-500"></div>
+          <div class="icone flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-2xl">📰</div>
+          <h3 class="mt-5 text-lg font-bold">Fake news</h3>
+          <p class="mt-2 text-sm leading-relaxed mut">Notícia inventada ou distorcida que <strong class="txt">copia o formato do jornalismo</strong>, com título, foto e aparência de portal, para parecer confiável.</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="reveal card pontos rounded-[2rem] p-6 sm:p-10">
+      <p class="text-sm font-bold uppercase tracking-widest text-violet-500">Como uma mentira viaja</p>
+      <h2 class="mt-2 text-3xl font-extrabold sm:text-4xl">Do criador ao seu celular</h2>
+      <p class="mt-3 max-w-2xl mut">A desinformação passa por quatro etapas. Toque em cada uma para ver como ela avança e o que fazer para interromper.</p>
+
+      <ol class="mt-10 grid items-start gap-6 md:grid-cols-2 lg:gap-8">
+        <li class="list-none">
+          <details name="fluxo" class="reveal card group relative rounded-3xl p-6 shadow-sm transition hover:shadow-xl open:ring-2 open:ring-violet-400 sm:p-8" style="--atraso:200ms">
+            <summary class="flex cursor-pointer list-none items-center gap-5 pr-12 [&::-webkit-details-marker]:hidden">
+              <span class="num flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-xl font-extrabold text-white" style="--i:0;--rgb:15,23,42">1</span>
+              <span class="min-w-0 flex-1"><span class="block text-xl font-extrabold sm:text-2xl">Criação</span><span class="sub block text-sm mut">Como uma mentira nasce</span></span>
+              <span class="plus absolute right-6 top-6 text-3xl leading-none mut sm:right-8 sm:top-8">+</span>
+            </summary>
+            <div class="corpo mt-6 space-y-4 leading-relaxed mut">
+              <p>Toda desinformação começa com uma decisão: alguém escolhe produzir ou distorcer uma informação. Há duas formas principais. Na primeira, o conteúdo é fabricado do zero, como uma notícia inventada com a aparência de um portal conhecido. Na segunda, a base é verdadeira, mas é manipulada: um fato real é cortado, datado errado, tirado do contexto ou ligado a uma conclusão que os dados não sustentam.</p>
+              <p>O objetivo quase sempre é influenciar uma opinião, ganhar com cliques, prejudicar alguém ou provocar reação. Quanto mais convincente a história, mais chance ela tem de ser aceita sem questionamento.</p>
+              <p class="soft rounded-2xl p-4"><strong class="txt">Exemplo:</strong> uma foto de uma enchente de anos atrás é publicada com a legenda "chuva de hoje no centro". Nenhum pixel foi alterado. O que é falso é a data.</p>
+              <p class="dica soft rounded-r-2xl p-4"><strong class="txt">Como agir:</strong> antes de aceitar uma imagem, faça uma busca reversa no Google Lens ou no TinEye.</p>
+            </div>
+          </details>
+        </li>
+
+        <li class="list-none">
+          <details name="fluxo" class="reveal card group relative rounded-3xl p-6 shadow-sm transition hover:shadow-xl open:ring-2 open:ring-violet-400 sm:p-8" style="--atraso:400ms">
+            <summary class="flex cursor-pointer list-none items-center gap-5 pr-12 [&::-webkit-details-marker]:hidden">
+              <span class="num flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-violet-600 text-xl font-extrabold text-white" style="--i:1;--rgb:124,58,237">2</span>
+              <span class="min-w-0 flex-1"><span class="block text-xl font-extrabold sm:text-2xl">Apelo emocional</span><span class="sub block text-sm mut">Por que sentir vem antes de pensar</span></span>
+              <span class="plus absolute right-6 top-6 text-3xl leading-none mut sm:right-8 sm:top-8">+</span>
+            </summary>
+            <div class="corpo mt-6 space-y-4 leading-relaxed mut">
+              <p>Uma mentira não precisa ser bem construída para funcionar. Basta ser emocionalmente forte. Medo, raiva, indignação e sensação de injustiça chamam a atenção e reduzem a vontade de checar.</p>
+              <p>Estudos sobre redes sociais, como o de Brady e colegas (2017, <em>PNAS</em>), indicam que mensagens com forte carga moral e emocional tendem a ser mais compartilhadas. Quando a emoção assume o controle, a pessoa avalia menos a fonte e repassa por impulso.</p>
+              <p class="soft rounded-2xl p-4"><strong class="txt">Exemplo:</strong> "Isso vai afetar a sua família, leia agora!" provoca preocupação antes de qualquer análise.</p>
+              <p class="dica soft rounded-r-2xl p-4"><strong class="txt">Como agir:</strong> se uma mensagem provoca raiva imediata, pare. A emoção é o sinal de que é hora de checar, não de repassar.</p>
+            </div>
+          </details>
+        </li>
+
+        <li class="list-none">
+          <details name="fluxo" class="reveal card group relative rounded-3xl p-6 shadow-sm transition hover:shadow-xl open:ring-2 open:ring-violet-400 sm:p-8" style="--atraso:600ms">
+            <summary class="flex cursor-pointer list-none items-center gap-5 pr-12 [&::-webkit-details-marker]:hidden">
+              <span class="num flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-amber-500 text-xl font-extrabold text-white" style="--i:2;--rgb:245,158,11">3</span>
+              <span class="min-w-0 flex-1"><span class="block text-xl font-extrabold sm:text-2xl">Disseminação</span><span class="sub block text-sm mut">Como a pressa espalha o boato</span></span>
+              <span class="plus absolute right-6 top-6 text-3xl leading-none mut sm:right-8 sm:top-8">+</span>
+            </summary>
+            <div class="corpo mt-6 space-y-4 leading-relaxed mut">
+              <p>Depois de provocar reação, a mentira depende das pessoas. Frases como "compartilhe antes que apaguem!" ou "a mídia não quer que você saiba" criam urgência e a sensação de exclusividade. O leitor sente que, se não repassar, será cúmplice do silêncio.</p>
+              <p>Em grupos de mensagens, o repasse costuma vir de pessoas próximas, o que aumenta a confiança. A mensagem chega com a credibilidade de quem enviou, e não da fonte original, que quase nunca aparece.</p>
+              <p class="soft rounded-2xl p-4"><strong class="txt">Exemplo:</strong> um áudio sem origem chega a um grupo da família com a frase "encaminha para todos". Em minutos, dezenas de pessoas o recebem.</p>
+              <p class="dica soft rounded-r-2xl p-4"><strong class="txt">Como agir:</strong> pergunte quem publicou isso pela primeira vez. Se a resposta for "não sei", não repasse.</p>
+            </div>
+          </details>
+        </li>
+
+        <li class="list-none">
+          <details name="fluxo" class="reveal card group relative rounded-3xl p-6 shadow-sm transition hover:shadow-xl open:ring-2 open:ring-violet-400 sm:p-8" style="--atraso:800ms">
+            <summary class="flex cursor-pointer list-none items-center gap-5 pr-12 [&::-webkit-details-marker]:hidden">
+              <span class="num flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-rose-600 text-xl font-extrabold text-white" style="--i:3;--rgb:225,29,72">4</span>
+              <span class="min-w-0 flex-1"><span class="block text-xl font-extrabold sm:text-2xl">Viralização</span><span class="sub block text-sm mut">Como uma mentira alcança milhares</span></span>
+              <span class="plus absolute right-6 top-6 text-3xl leading-none mut sm:right-8 sm:top-8">+</span>
+            </summary>
+            <div class="corpo mt-6 space-y-4 leading-relaxed mut">
+              <p>A cada repasse, a informação alcança grupos diferentes e ganha novas plataformas, muitas vezes sem o contexto original. Sistemas de recomendação tendem a amplificar o que gera reação, e isso não depende de a informação ser verdadeira.</p>
+              <p>A repetição também engana. O efeito de verdade ilusória faz uma afirmação repetida parecer mais verdadeira, mesmo quando é falsa. Um estudo de Vosoughi, Roy e Aral (2018, <em>Science</em>), com cerca de 126 mil histórias no Twitter, mostrou que as notícias falsas se espalharam mais rápido e alcançaram mais pessoas do que as verdadeiras.</p>
+              <p class="soft rounded-2xl p-4"><strong class="txt">Exemplo:</strong> uma mentira que começou com poucas mensagens pode alcançar milhares de pessoas em um dia.</p>
+              <p class="dica soft rounded-r-2xl p-4"><strong class="txt">Como agir:</strong> não compartilhar é a forma mais simples de quebrar essa cadeia.</p>
+            </div>
+          </details>
+        </li>
+      </ol>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-5">
+      <div class="reveal card rounded-3xl p-7 shadow-sm lg:col-span-3">
+        <p class="text-sm font-bold uppercase tracking-widest text-emerald-500">Antes de compartilhar</p>
+        <ul class="mt-5 space-y-4">
+          <li class="item flex items-start gap-4" style="--atraso:150ms"><span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/15 font-bold text-emerald-500">1</span><p class="pt-1"><strong>Quem publicou?</strong> Veja se há um autor ou instituição conhecida.</p></li>
+          <li class="item flex items-start gap-4" style="--atraso:300ms"><span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/15 font-bold text-emerald-500">2</span><p class="pt-1"><strong>Qual é a data?</strong> Fatos antigos voltam como se fossem novos.</p></li>
+          <li class="item flex items-start gap-4" style="--atraso:450ms"><span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/15 font-bold text-emerald-500">3</span><p class="pt-1"><strong>Outros veículos confirmam?</strong> Se ninguém mais noticiou, desconfie.</p></li>
+        </ul>
+      </div>
+      <div class="reveal flex flex-col justify-between rounded-3xl bg-gradient-to-br from-slate-900 to-blue-900 p-7 text-white shadow-xl lg:col-span-2" style="--atraso:200ms">
+        <div>
+          <p class="icone text-4xl">✋</p>
+          <h3 class="mt-4 text-2xl font-extrabold">Pare antes de repassar.</h3>
+          <p class="mt-2 text-sm text-slate-300">Esse gesto simples impede a maior parte dos boatos de se espalhar.</p>
+        </div>
+        <button data-alvo="deepfake" class="mt-8 w-full rounded-xl bg-white px-5 py-3.5 font-bold text-blue-900 transition hover:scale-[1.02] hover:bg-sky-100 active:scale-[.98]">Próximo: deepfakes →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · DEEPFAKES -->
+  <section data-view="deepfake">
+    <div class="reveal card rounded-[2rem] p-6 shadow-md sm:p-10">
+      <p class="text-sm font-bold uppercase tracking-widest text-sky-500">Deepfakes e conteúdo com IA</p>
+      <h2 class="mt-2 text-3xl font-extrabold sm:text-4xl">Quando ver não é suficiente</h2>
+      <p class="mt-4 max-w-3xl leading-relaxed mut">Deepfakes são vídeos, áudios ou imagens criados ou alterados por inteligência artificial para mostrar alguém dizendo ou fazendo algo que nunca aconteceu. Hoje, com poucos recursos, é possível gerar uma voz parecida com a de uma pessoa ou trocar um rosto em um vídeo.</p>
+
+      <p class="mt-8 text-sm font-bold uppercase tracking-widest mut">Edição comum ou manipulação por IA?</p>
+      <div class="mt-4 grid gap-4 md:grid-cols-2">
+        <div class="card rounded-2xl p-5"><p class="font-bold">Edição comum</p><p class="mt-2 text-sm leading-relaxed mut">Cortes, legendas, trilha sonora ou recorte de contexto. A pessoa realmente disse ou fez o que aparece, mas a montagem pode enganar.</p></div>
+        <div class="card rounded-2xl p-5"><p class="font-bold">Manipulação por IA</p><p class="mt-2 text-sm leading-relaxed mut">Troca de rosto, voz clonada ou cena inventada. A pessoa nunca disse ou fez aquilo, mesmo que o resultado pareça natural.</p></div>
+      </div>
+      <p class="mt-4 text-sm mut">Uma fraude pode nem usar IA. Por isso, a pergunta certa é "essa pessoa disse isso, neste contexto?", e não apenas "isso parece falso?".</p>
+
+      <p class="mt-8 text-sm font-bold uppercase tracking-widest mut">Sinais de alerta</p>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="item card rounded-2xl p-5 shadow-sm transition hover:shadow-md" style="--atraso:100ms"><p class="text-2xl">👄</p><h3 class="mt-3 font-bold">Boca fora de sincronia</h3><p class="mt-1 text-sm mut">Os movimentos dos lábios não combinam com o som.</p></div>
+        <div class="item card rounded-2xl p-5 shadow-sm transition hover:shadow-md" style="--atraso:200ms"><p class="text-2xl">👁️</p><h3 class="mt-3 font-bold">Piscadas estranhas</h3><p class="mt-1 text-sm mut">Pouca ou nenhuma piscada, ou um ritmo pouco natural.</p></div>
+        <div class="item card rounded-2xl p-5 shadow-sm transition hover:shadow-md" style="--atraso:300ms"><p class="text-2xl">🧑</p><h3 class="mt-3 font-bold">Bordas borradas</h3><p class="mt-1 text-sm mut">Contornos tremidos no cabelo, nos óculos ou no pescoço.</p></div>
+        <div class="item card rounded-2xl p-5 shadow-sm transition hover:shadow-md" style="--atraso:400ms"><p class="text-2xl">💡</p><h3 class="mt-3 font-bold">Luz que não bate</h3><p class="mt-1 text-sm mut">Sombras e iluminação diferentes do ambiente.</p></div>
+        <div class="item card rounded-2xl p-5 shadow-sm transition hover:shadow-md" style="--atraso:500ms"><p class="text-2xl">🎙️</p><h3 class="mt-3 font-bold">Voz artificial</h3><p class="mt-1 text-sm mut">Tom monótono, pausas ou entonação estranhas.</p></div>
+        <div class="item card rounded-2xl p-5 shadow-sm transition hover:shadow-md" style="--atraso:600ms"><p class="text-2xl">📢</p><h3 class="mt-3 font-bold">Sensacionalismo</h3><p class="mt-1 text-sm mut">Algo bombástico que nenhum veículo confiável noticiou.</p></div>
+      </div>
+
+      <p class="mt-8 text-sm font-bold uppercase tracking-widest mut">Como verificar</p>
+      <ol class="mt-4 space-y-3">
+        <li class="reveal card flex gap-4 rounded-2xl p-5" style="--atraso:100ms"><span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sky-500/15 font-bold text-sky-500">1</span><p class="pt-1 text-sm leading-relaxed"><strong>Procure a versão original</strong> no canal oficial de quem supostamente aparece no conteúdo. Se ela não existe ali, desconfie.</p></li>
+        <li class="reveal card flex gap-4 rounded-2xl p-5" style="--atraso:200ms"><span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sky-500/15 font-bold text-sky-500">2</span><p class="pt-1 text-sm leading-relaxed"><strong>Busque o assunto em veículos confiáveis.</strong> Declarações polêmicas de figuras públicas costumam gerar cobertura.</p></li>
+        <li class="reveal card flex gap-4 rounded-2xl p-5" style="--atraso:300ms"><span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sky-500/15 font-bold text-sky-500">3</span><p class="pt-1 text-sm leading-relaxed"><strong>Pesquise o caso em agências de checagem.</strong> Elas costumam publicar vereditos sobre áudios e vídeos que circulam.</p></li>
+      </ol>
+
+      <div class="reveal dica soft mt-8 rounded-r-2xl p-5 text-sm leading-relaxed" style="--atraso:300ms"><strong>Atenção:</strong> nenhum sinal desses é prova definitiva, e detectores automáticos de IA erram com frequência. O critério mais seguro é a verificação de origem.</div>
+
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-between">
+        <button data-alvo="entenda" class="rounded-xl soft px-5 py-3 font-semibold transition hover:opacity-80">← Voltar ao início</button>
+        <button data-alvo="fontes" class="rounded-xl bg-slate-900 px-5 py-3 font-bold text-white transition hover:bg-slate-700">Próximo: checagem →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · CHECAGEM (SIFT + fontes oficiais) -->
+  <section data-view="fontes">
+    <div class="reveal">
+      <p class="text-sm font-bold uppercase tracking-widest text-emerald-500">Checagem</p>
+      <h2 class="mt-2 text-3xl font-extrabold sm:text-4xl">Método SIFT e fontes oficiais</h2>
+      <p class="mt-3 max-w-2xl mut">Checar uma informação leva poucos minutos quando você segue um método. O SIFT organiza esse caminho em quatro passos. Depois, veja onde confirmar cada um.</p>
+    </div>
+
+    <div class="mt-8 grid gap-4 sm:grid-cols-2">
+      <div class="reveal card rounded-2xl p-6 shadow-sm" style="--atraso:100ms">
+        <div class="flex items-center gap-4"><span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-rose-500 text-xl font-extrabold text-white">S</span><div><p class="font-bold">Stop · Pare</p><p class="text-xs font-semibold text-rose-500">Antes de repassar</p></div></div>
+        <p class="mt-4 text-sm leading-relaxed mut">Perceba se a mensagem provoca pressa, raiva ou medo. Pedidos como "compartilhe agora" são sinais de alerta. Esse é o momento de checar, não de repassar.</p>
+      </div>
+      <div class="reveal card rounded-2xl p-6 shadow-sm" style="--atraso:200ms">
+        <div class="flex items-center gap-4"><span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-xl font-extrabold text-white">I</span><div><p class="font-bold">Investigate · Investigue a fonte</p><p class="text-xs font-semibold text-amber-500">Quem publicou?</p></div></div>
+        <p class="mt-4 text-sm leading-relaxed mut">Descubra quem publicou. Confira o domínio letra por letra, porque golpes usam endereços quase iguais aos oficiais. Veja se há nome de veículo, jornalista, órgão ou especialista, e se a página tem histórico e correções públicas.</p>
+      </div>
+      <div class="reveal card rounded-2xl p-6 shadow-sm" style="--atraso:300ms">
+        <div class="flex items-center gap-4"><span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-500 text-xl font-extrabold text-white">F</span><div><p class="font-bold">Find · Procure outras coberturas</p><p class="text-xs font-semibold text-sky-500">Alguém mais confirmou?</p></div></div>
+        <p class="mt-4 text-sm leading-relaxed mut">Procure o mesmo assunto em veículos confiáveis e nos canais oficiais. Se ninguém mais noticiou algo grave, isso é um sinal de alerta.</p>
+      </div>
+      <div class="reveal card rounded-2xl p-6 shadow-sm" style="--atraso:400ms">
+        <div class="flex items-center gap-4"><span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-xl font-extrabold text-white">T</span><div><p class="font-bold">Trace · Rastreie a afirmação</p><p class="text-xs font-semibold text-emerald-500">Qual é a origem?</p></div></div>
+        <p class="mt-4 text-sm leading-relaxed mut">Volte à origem: a publicação original, o documento, a data e o vídeo completo. Para imagens, use busca reversa no Google Lens ou no TinEye.</p>
+      </div>
+    </div>
+
+    <div class="reveal card mt-10 rounded-3xl p-6 shadow-md sm:p-8" style="--atraso:100ms">
+      <p class="text-xs font-bold uppercase tracking-widest mut">Caso resolvido</p>
+      <div class="soft mt-4 rounded-2xl p-5">
+        <p class="font-bold">@perfil_ficticio</p>
+        <p class="mt-2">"URGENTE! Imagem mostra o rio transbordando hoje no centro da cidade. Compartilhem!"</p>
+      </div>
+      <ul class="mt-6 space-y-4">
+        <li class="reveal flex gap-4" style="--atraso:100ms"><span class="w-6 shrink-0 font-extrabold text-rose-500">S</span><p class="text-sm leading-relaxed"><strong>Pressa e urgência:</strong> o "URGENTE" e o "compartilhem" são sinais de alerta. Ao notar isso, pare.</p></li>
+        <li class="reveal flex gap-4" style="--atraso:200ms"><span class="w-6 shrink-0 font-extrabold text-amber-500">I</span><p class="text-sm leading-relaxed"><strong>Autor desconhecido:</strong> o perfil não tem nome de veículo, jornalista ou órgão, nem histórico verificável.</p></li>
+        <li class="reveal flex gap-4" style="--atraso:300ms"><span class="w-6 shrink-0 font-extrabold text-sky-500">F</span><p class="text-sm leading-relaxed"><strong>Sem confirmação:</strong> a prefeitura, a Defesa Civil e os veículos da região não publicaram nada sobre o transbordamento.</p></li>
+        <li class="reveal flex gap-4" style="--atraso:400ms"><span class="w-6 shrink-0 font-extrabold text-emerald-500">T</span><p class="text-sm leading-relaxed"><strong>Imagem antiga:</strong> uma busca reversa mostra que a foto é de outro evento e de outra data.</p></li>
+      </ul>
+      <div class="reveal dica soft mt-6 rounded-r-2xl p-4 text-sm leading-relaxed" style="--atraso:500ms"><strong>Conclusão:</strong> não repasse. Se a chuva fosse real, ela apareceria nos canais oficiais e na imprensa local.</div>
+    </div>
+
+    <p class="mt-12 text-sm font-bold uppercase tracking-widest mut">Onde confirmar</p>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <div class="reveal card rounded-2xl p-5" style="--atraso:100ms"><p class="font-bold">Tribunal Superior Eleitoral</p><p class="text-xs font-semibold text-blue-500">tse.jus.br</p><p class="mt-2 text-sm leading-relaxed mut">Datas, candidaturas, urnas e resultados. Para temas eleitorais, o site oficial é a referência principal.</p></div>
+      <div class="reveal card rounded-2xl p-5" style="--atraso:200ms"><p class="font-bold">Tribunal Regional Eleitoral da Bahia (TRE-BA)</p><p class="text-xs font-semibold text-blue-500">tre-ba.jus.br</p><p class="mt-2 text-sm leading-relaxed mut">Zonas eleitorais, locais de votação e informações específicas do estado.</p></div>
+      <div class="reveal card rounded-2xl p-5" style="--atraso:300ms"><p class="font-bold">Agências de checagem</p><p class="text-xs font-semibold text-blue-500">Aos Fatos · Lupa · Estadão Verifica · Comprova · G1 Fato ou Fake</p><p class="mt-2 text-sm leading-relaxed mut">Analisam boatos com metodologia pública e mostram os links usados para chegar ao veredito.</p></div>
+      <div class="reveal card rounded-2xl p-5" style="--atraso:400ms"><p class="font-bold">Portais com redação própria</p><p class="text-xs font-semibold text-blue-500">Veículos com nome de repórter, data e correções públicas</p><p class="mt-2 text-sm leading-relaxed mut">Quando erram, mostram a correção. Quando ninguém assina nem corrige, desconfie.</p></div>
+    </div>
+
+    <div class="reveal dica soft mt-8 rounded-r-2xl p-5 text-sm leading-relaxed" style="--atraso:100ms"><strong>Regra final:</strong> sem resposta, não repasse. Não compartilhar também é uma escolha responsável.</div>
+
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-between">
+      <button data-alvo="deepfake" class="rounded-xl soft px-5 py-3 font-semibold transition hover:opacity-80">← Deepfakes</button>
+      <button data-alvo="quiz" class="rounded-xl bg-slate-900 px-5 py-3 font-bold text-white transition hover:bg-slate-700">Testar no quiz →</button>
+    </div>
+  </section>
+
+  <!-- 4 · QUIZ -->
+  <section data-view="quiz">
+    <div class="mx-auto max-w-2xl">
+      <div class="flex items-center justify-between text-sm font-semibold mut">
+        <span id="contagem"></span>
+        <span>Acertos: <span id="acertos" class="text-blue-500">0</span></span>
+      </div>
+      <div class="mt-3 h-2 overflow-hidden rounded-full soft"><div id="barra" class="h-full w-0 rounded-full bg-blue-600 transition-all duration-500"></div></div>
+
+      <div class="mt-6 card rounded-3xl p-6 shadow-md sm:p-8">
+        <div class="flex flex-wrap gap-2">
+          <span id="grupo" class="rounded-lg bg-violet-500/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-violet-500"></span>
+          <span id="tipo" class="rounded-lg bg-blue-500/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-blue-500"></span>
+        </div>
+        <p id="texto" class="mt-4 text-xl font-bold leading-snug sm:text-2xl"></p>
+        <p id="pista" class="mt-3 text-sm mut"></p>
+      </div>
+
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        <button id="confiavel" class="rounded-2xl border-2 border-emerald-500 bg-[var(--card)] px-5 py-4 font-bold text-emerald-500 transition hover:bg-emerald-500/10 disabled:opacity-40">✓ Confiável</button>
+        <button id="naoConfiavel" class="rounded-2xl border-2 border-rose-500 bg-[var(--card)] px-5 py-4 font-bold text-rose-500 transition hover:bg-rose-500/10 disabled:opacity-40">✕ Não confiável</button>
+      </div>
+
+      <div id="resultado" class="mt-6 hidden rounded-2xl p-5">
+        <p id="veredito" class="font-extrabold"></p>
+        <p id="explicacao" class="mt-2 text-sm leading-relaxed"></p>
+      </div>
+
+      <div class="mt-6 flex justify-end">
+        <button id="proxima" disabled class="rounded-xl bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-700 disabled:opacity-40">Próxima →</button>
+      </div>
+
+      <div id="final" class="mt-8 hidden rounded-3xl bg-gradient-to-br from-blue-600 to-violet-600 p-6 text-white shadow-lg sm:p-8">
+        <p class="text-sm font-semibold uppercase tracking-wide text-blue-100">Resultado final</p>
+        <p class="mt-2 text-4xl font-extrabold sm:text-5xl">ACERTOS <span id="totalFinal"></span></p>
+        <div id="desempenho" class="mt-5 space-y-1 text-sm"></div>
+        <p class="mt-6 text-sm font-bold uppercase tracking-wide text-blue-100">Revisão das respostas erradas</p>
+        <div id="revisao" class="mt-3 space-y-3"></div>
+        <button id="refazer" class="mt-6 rounded-xl bg-white px-5 py-3 font-semibold text-blue-700 transition hover:bg-blue-50">Refazer o quiz</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="border-t border-[var(--line)]">
+  <p class="mx-auto max-w-5xl px-5 py-6 text-center text-xs mut">Simulação didática. Nomes, veículos e situações são fictícios e não têm relação com o sistema real de votação.</p>
+</footer>
+
+<script>
+  // Perguntas fictícias baseadas em técnicas documentadas. c = true significa confiável.
+  const base = [
+    { t:"Apelo emocional", x:"CHOCANTE! Prefeitura vai fechar TODAS as escolas amanhã. Compartilhe antes que apaguem!", p:"Post sem data, sem link oficial e sem fonte.", c:false, e:"A urgência e o medo empurram o compartilhamento antes da checagem. Um anúncio real aparece no site da prefeitura, com data e órgão responsável." },
+    { t:"Deepfake (áudio)", x:"Áudio atribuído ao prefeito diz que a coleta de lixo está suspensa por três meses.", p:"Áudio enviado por mensagem, sem origem identificada.", c:false, e:"Vozes podem ser clonadas com inteligência artificial. Confirme no comunicado oficial, e não no áudio." },
+    { t:"Fonte inexistente", x:"Segundo o Instituto Nacional de Estatísticas Gerais, 9 em cada 10 moradores aprovam a nova ciclovia.", p:"Não há nome da pesquisa, amostra, período ou link.", c:false, e:"Pesquisas confiáveis informam quem fez, como, quando e com quantas pessoas. Sem isso, o número não pode ser verificado." },
+    { t:"Imagem fora de contexto", x:"Foto mostra a enchente de ontem na capital.", p:"A mesma imagem aparece em postagens com datas diferentes.", c:false, e:"Uma busca reversa de imagem (Google Lens ou TinEye) mostra a data e o lugar da primeira publicação." },
+    { t:"Recorte de fala", x:"Secretária: \"Não temos verba para esse projeto\". O vídeo tem 10 segundos.", p:"O vídeo é um trecho de uma entrevista de 3 minutos.", c:false, e:"O corte removeu a frase seguinte, em que a secretária anuncia um repasse para o mesmo projeto. Sempre veja o conteúdo completo." },
+    { t:"Dado com conclusão falsa", x:"Dados oficiais mostram que os atendimentos na UPA caíram 15% em outubro. Logo, a prefeitura fechou a unidade em segredo.", p:"O dado é real, mas a conclusão não aparece nele.", c:false, e:"Uma queda nos atendimentos pode ter muitas causas. O dado não prova fechamento nem segredo. Conclusões precisam de evidências próprias." },
+    { t:"Comunicado oficial", x:"Biblioteca municipal amplia o horário de atendimento aos sábados a partir de março.", p:"Publicado no site da prefeitura, com data e contato.", c:true, e:"Tem fonte oficial, data e canal de contato verificável. Mesmo assim, confirme no site quando a informação for importante." },
+    { t:"Correção pública", x:"Portal publica nota: uma matéria sobre o horário de provas foi corrigida após um erro de publicação.", p:"A nota explica o erro e traz a versão corrigida, com data.", c:true, e:"Corrigir publicamente mostra compromisso com a verdade. Veículos sérios mostram o erro, em vez de apagá-lo em silêncio." },
+    { t:"Dado com metodologia", x:"Secretaria de Saúde divulga boletim com casos de dengue por bairro, período e método de coleta.", p:"O documento está no site oficial e cita a origem dos dados.", c:true, e:"Dados úteis informam origem, período e método. Isso permite conferir e comparar com boletins anteriores." },
+    { t:"Múltiplas fontes", x:"Três veículos independentes publicam a inauguração de uma ponte, com fotos da cerimônia e nota da prefeitura.", p:"As matérias citam fontes diferentes e trazem a mesma informação.", c:true, e:"Quando fontes independentes confirmam o mesmo fato, a chance de erro cai. Ainda assim, observe se não repetem uma única origem." },
+    { t:"Vídeo original", x:"Canal oficial da prefeitura publica o vídeo completo da reunião, sem cortes, com data e pauta.", p:"O vídeo traz a fala inteira e o contexto da reunião.", c:true, e:"Conteúdo completo, com data e origem, é mais difícil de manipular. Quando só existe um trecho, desconfie." },
+    { t:"Calendário oficial", x:"Secretaria de Educação divulga o calendário de matrículas no site oficial, com datas e telefone de atendimento.", p:"A publicação está no domínio do órgão e tem contato para dúvidas.", c:true, e:"Informações úteis ao cidadão são publicadas em canais oficiais e podem ser confirmadas por telefone ou presencialmente." }
+  ];
+
+  const $ = id => document.getElementById(id);
+  let ordem = [], atual = 0, acertos = 0, respondeu = false, historico = [];
+
+  function embaralhar(a) {
+    const r = [...a];
+    for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; }
+    return r;
+  }
+
+  function aplicarTema(escuro) {
+    document.documentElement.classList.toggle("dark", escuro);
+    $("tema").textContent = escuro ? "☀️" : "🌙";
+  }
+  $("tema").onclick = () => {
+    const escuro = !document.documentElement.classList.contains("dark");
+    aplicarTema(escuro);
+    try { localStorage.setItem("tema", escuro ? "escuro" : "claro"); } catch (_) {}
+  };
+  try { aplicarTema(localStorage.getItem("tema") === "escuro"); } catch (_) { aplicarTema(false); }
+
+  const obs = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add("visivel"); obs.unobserve(e.target); }
+  }), { threshold: .15 });
+  function observarAtiva() {
+    document.querySelectorAll("section.ativa .reveal, section.ativa .item").forEach(el => {
+      if (!el.classList.contains("visivel")) obs.observe(el);
+    });
+  }
+
+  function pulsar(el, v) {
+    el.textContent = v;
+    el.animate([{ transform: "scale(1.4)" }, { transform: "scale(1)" }], { duration: 300 });
+  }
+
+  function mostrarPergunta() {
+    const p = ordem[atual];
+    respondeu = false;
+    $("contagem").textContent = `Questão ${atual + 1} de ${ordem.length}`;
+    $("barra").style.width = `${(atual / ordem.length) * 100}%`;
+    $("grupo").textContent = p.c ? "Sinal de confiança" : "Técnica de manipulação";
+    $("tipo").textContent = p.t;
+    $("texto").textContent = p.x;
+    $("pista").textContent = "Pista: " + p.p;
+    $("resultado").className = "mt-6 hidden rounded-2xl p-5";
+    $("confiavel").disabled = false;
+    $("naoConfiavel").disabled = false;
+    $("proxima").disabled = true;
+    $("proxima").textContent = atual === ordem.length - 1 ? "Ver resultado" : "Próxima →";
+    pulsar($("acertos"), acertos);
+    $("texto").parentElement.animate([{ opacity: 0, transform: "translateX(24px)" }, { opacity: 1, transform: "none" }], { duration: 350 });
+  }
+
+  function responder(escolha) {
+    if (respondeu) return;
+    respondeu = true;
+    const p = ordem[atual], ok = escolha === p.c;
+    if (ok) acertos++;
+    historico.push({ p, ok });
+    pulsar($("acertos"), acertos);
+    const r = $("resultado");
+    r.className = "mt-6 rounded-2xl p-5 ring-1 " + (ok ? "bg-emerald-500/10 text-emerald-500 ring-emerald-500/30" : "bg-rose-500/10 text-rose-500 ring-rose-500/30");
+    $("veredito").textContent = ok ? "Você acertou!" : "Não foi dessa vez.";
+    $("explicacao").textContent = p.e;
+    $("confiavel").disabled = true;
+    $("naoConfiavel").disabled = true;
+    $("proxima").disabled = false;
+  }
+
+  function avancar() {
+    if (atual < ordem.length - 1) { atual++; mostrarPergunta(); }
+    else mostrarFinal();
+  }
+
+  function mostrarFinal() {
+    $("barra").style.width = "100%";
+    $("totalFinal").textContent = `${acertos}/${ordem.length}`;
+    const man = historico.filter(h => !h.p.c), con = historico.filter(h => h.p.c);
+    $("desempenho").innerHTML =
+      `<p>Técnicas de manipulação: <strong>${man.filter(h => h.ok).length}/${man.length}</strong></p>` +
+      `<p>Sinais de confiança: <strong>${con.filter(h => h.ok).length}/${con.length}</strong></p>`;
+    const erros = historico.filter(h => !h.ok);
+    $("revisao").innerHTML = erros.length
+      ? erros.map(h => `<div class="rounded-2xl bg-white/10 p-4"><p class="font-bold">${h.p.t}</p><p class="mt-1 text-sm text-blue-100">${h.p.e}</p></div>`).join("")
+      : `<p class="text-sm">Você acertou todas. Ótimo trabalho!</p>`;
+    $("proxima").disabled = true;
+    $("final").classList.remove("hidden");
+  }
+
+  function refazer() {
+    ordem = embaralhar(base);
+    atual = 0; acertos = 0; historico = [];
+    $("acertos").textContent = 0;
+    $("final").classList.add("hidden");
+    mostrarPergunta();
+  }
+
+  function mostrarSecao(id) {
+    document.querySelectorAll("section[data-view]").forEach(s => s.classList.toggle("ativa", s.dataset.view === id));
+    document.querySelectorAll(".nav-btn").forEach(b => b.classList.toggle("ativo", b.dataset.alvo === id));
+    observarAtiva();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  document.querySelectorAll("[data-alvo]").forEach(b => b.addEventListener("click", () => {
+    if (b.dataset.alvo === "quiz" && !ordem.length) refazer();
+    mostrarSecao(b.dataset.alvo);
+  }));
+  $("confiavel").onclick = () => responder(true);
+  $("naoConfiavel").onclick = () => responder(false);
+  $("proxima").onclick = avancar;
+  $("refazer").onclick = refazer;
+
+  ordem = embaralhar(base);
+  mostrarPergunta();
+  observarAtiva();
+</script>
+</body>
+</html>
