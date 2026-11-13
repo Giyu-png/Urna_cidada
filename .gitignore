@@ -11,4 +11,9 @@ secrets/
 *service-account*.json
 *firebase-admin*.json
 *credentials*.json
-
+.vscode/
+node_modules/
+.firebase/
+firebase-debug.log
+firestore-debug.log
+*.log

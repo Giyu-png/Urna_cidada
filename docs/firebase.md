@@ -1,8 +1,8 @@
 # Banco de dados — Cloud Firestore (responsabilidade de persistência)
 
-Esta branch implementa o armazenamento de **votos fictícios agregados**, não de dados pessoais. O programa utiliza Java 21, Maven e a biblioteca oficial `google-cloud-firestore:3.49.0`.
+Este projeto implementa o armazenamento de **votos fictícios agregados**, não de dados pessoais. O programa utiliza Java 21, Maven e a biblioteca oficial `google-cloud-firestore:3.49.0`.
 
-> **Situação:** a urna mantém uma cópia da sessão em memória e envia os dois votos ao Firestore em segundo plano após a confirmação. A integração real depende de ADC com acesso ao projeto; ainda precisa ser validada no ambiente de demonstração.
+> **Situação:** a urna mantém uma cópia da sessão em memória e envia os dois votos ao Firestore em segundo plano após a confirmação. O acesso real depende de ADC e permissões IAM da máquina autorizada. Antes de cada oficina, valide a conexão e a simulação selecionada.
 
 ## 1. Criar o banco
 
@@ -31,7 +31,7 @@ simulacoes/{simulacaoId}
   resultados/{CARGO_TIPO_REFERENCIA}
     cargo: "DEPUTADO_FEDERAL"
     tipo: "NOMINAL"
-    referencia: "8101"
+    referencia: "<numero-ficticio>"
     quantidade: 7
 
   resultados/{CARGO_TIPO}
@@ -83,7 +83,7 @@ Se a gravação falhar, a transação não deve adicionar resultados parciais. I
 
 - Validar conexão, permissões e tratamento de falhas em um projeto Firebase de teste.
 - Revisar as permissões ADC e manter acesso mínimo na máquina administrativa.
-- Antes de distribuir para participantes, substituir o acesso direto por um backend autenticado.
+- Manter o uso do SDK de servidor somente nos computadores autorizados; não distribuir credenciais a participantes.
 
 ## Referências técnicas
 
@@ -93,7 +93,7 @@ Se a gravação falhar, a transação não deve adicionar resultados parciais. I
 
 ## 8. Integração com a interface Swing
 
-Na branch `feature/firebase-firestore`, a interface envia a sessão concluída ao
+Na versão integrada à `main`, a interface envia a sessão concluída ao
 Firestore usando `SwingWorker` para não bloquear a thread de eventos do Swing.
 
 1. Execute `br.edu.urnacidada.Main` pelo IntelliJ com suas credenciais ADC locais.
