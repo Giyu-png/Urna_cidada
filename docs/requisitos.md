@@ -2,7 +2,7 @@
 
 ## Objetivo e escopo
 
-Simulador educativo de votação para deputado federal e presidente, desenvolvido em Java Swing e POO para um projeto de extensão sobre cidadania. Não é um produto eleitoral oficial. As candidaturas e os partidos são paródias criadas para a simulação; algumas imagens fazem referência a pessoas e personagens conhecidos.
+Simulador educativo de votação para deputado federal e presidente, desenvolvido em Java Swing e POO para um projeto de extensão sobre cidadania. Não é um produto eleitoral oficial. As candidaturas e os partidos são dados de exemplo do simulador e devem ser revisados antes de atividades com público externo.
 
 ## Funcionalidades implementadas
 
@@ -26,6 +26,6 @@ Simulador educativo de votação para deputado federal e presidente, desenvolvid
 - A indicação do candidato mais votado não equivale a declarar eleito; não há cálculo de cadeiras proporcionais.
 - O programa não reproduz a infraestrutura e as garantias de uma urna oficial.
 
-## Fora do código atual
+## Material educativo web e limites
 
-Não há IA local, minigame, verificação automática de notícias ou questionários. Esses recursos podem existir como parte da oficina ou de outros materiais, mas não são entregues neste repositório.
+O repositório também contém `site/index.html`, uma página educativa independente com orientações sobre desinformação, deepfakes, checagem de fontes e quiz interativo em JavaScript. **Não há LLM local integrada** ao software, e o quiz não corresponde aos questionários de avaliação pré/pós-oficina definidos na proposta de extensão. Esses instrumentos acadêmicos podem ser produzidos e entregues separadamente.
