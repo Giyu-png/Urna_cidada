@@ -1,20 +1,19 @@
-# Imagens dos candidatos — Urna Cidadã
+# Recursos de imagem — Urna Cidadã
 
-A pasta contém imagens usadas em **candidaturas satíricas**, inclusive memes, personagens e referências a pessoas conhecidas. Nenhum personagem ou pessoa retratada é candidato real por causa deste projeto. Confiram a adequação e os direitos de uso das imagens antes de uma apresentação pública.
+Esta pasta armazena imagens locais das candidaturas utilizadas na simulação educativa. As referências são definidas no arquivo `src/main/java/br/edu/urnacidada/service/CatalogoFicticio.java`.
 
-O arquivo `src/main/java/br/edu/urnacidada/service/CatalogoFicticio.java` associa cada candidatura aos PNGs abaixo:
+## Como manter o cadastro
 
-| Número | Cargo | Nome no simulador | Arquivo |
-| --- | --- | --- | --- |
-| 67 | Presidente | Coloridinho | `coloridinho.png` |
-| 6767 | Deputado federal | Emily Vik | `emily_vik.png` |
-| 10 | Presidente | Gato Nihao | `gato_nihao.png` |
-| 1069 | Deputado federal | Gato Babao | `Gato_Babao.png` |
-| 90 | Presidente | P Diddy | `pdiddy.png` |
-| 9022 | Deputado federal | Elon Musk | `elon_musk.png` |
-| 66 | Presidente | IT a Coisa | `IT.png` |
-| 6666 | Deputado federal | cthulhu | `cutulo.png` |
+1. Cadastre ou atualize o partido e a candidatura no `CatalogoFicticio.java`.
+2. Informe o caminho `/candidatos/nome-do-arquivo.png` na respectiva `Ficha`.
+3. Adicione o arquivo PNG correspondente nesta pasta, mantendo o nome e a capitalização exatos.
+4. Execute `mvn clean test` e confira se as imagens de todas as candidaturas cadastradas são encontradas.
+5. Confira também a apresentação das fotos na urna e no painel de apuração.
 
-Os nomes dos arquivos diferenciam maiúsculas de minúsculas em alguns sistemas. A urna e a apuração carregam as fotos localmente pelo classpath do Maven, sem conexão com internet. Se um arquivo estiver ausente, aparece uma silhueta neutra.
+A lista de candidaturas **não é fixada nesta documentação** porque pode ser atualizada para atividades educativas diferentes. Alguns arquivos antigos podem permanecer armazenados sem estar referenciados no catálogo atual.
 
-Para adicionar outra candidatura, inclua sua `Ficha` em `CatalogoFicticio.java`, defina seu número e partido fictício e coloque o PNG correspondente nesta pasta.
+## Uso responsável
+
+As candidaturas são parte de uma simulação, não representam posições políticas nem eleições reais. Antes de apresentar o projeto em uma escola, revisem a adequação ao público, a licença e os direitos de uso de cada imagem.
+
+As imagens são carregadas a partir dos recursos locais do programa, não do Firebase. Quando uma imagem cadastrada não pode ser carregada, a interface apresenta uma silhueta neutra.
