@@ -9,7 +9,7 @@ class ResumoApuracaoTest {
     @Test
     void calculaResultadosSeparadamentePorCargo() {
         var dados = ResumoApuracao.analisar(Map.of(
-            "DEPUTADO_FEDERAL_NOMINAL_6767", 3L,
+            "DEPUTADO_FEDERAL_NOMINAL_9267", 3L,
             "DEPUTADO_FEDERAL_LEGENDA_10", 1L,
             "DEPUTADO_FEDERAL_BRANCO", 1L,
             "PRESIDENTE_NOMINAL_67", 4L,
@@ -29,7 +29,7 @@ class ResumoApuracaoTest {
         assertEquals(60.0, deputado.linhas().get(0).percentual(), 0.001);
         assertTrue(deputado.linhas().stream().anyMatch(
                 linha -> linha.numero().equals("10")
-                        && linha.opcao().contains("Partido RacionaisMC")));
+                        && linha.opcao().contains("Partido dos Gatos Revolucionários")));
     }
 
     @Test

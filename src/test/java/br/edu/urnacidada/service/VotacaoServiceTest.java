@@ -8,9 +8,9 @@ class VotacaoServiceTest {
     private final VotacaoService service = CatalogoFicticio.criarServico();
 
     @Test void identificaVotoNominalProporcional() {
-        Voto voto = service.classificarVoto(Cargo.DEPUTADO_FEDERAL, "6767", false);
+        Voto voto = service.classificarVoto(Cargo.DEPUTADO_FEDERAL, "9267", false);
         assertEquals(TipoVoto.NOMINAL, voto.getTipo());
-        assertEquals("6767", voto.getReferencia());
+        assertEquals("9267", voto.getReferencia());
     }
 
     @Test void identificaVotoDeLegendaProporcional() {
