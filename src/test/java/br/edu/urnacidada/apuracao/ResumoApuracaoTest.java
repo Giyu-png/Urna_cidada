@@ -24,9 +24,12 @@ class ResumoApuracaoTest {
         assertEquals(5L, presidente.total());
         assertEquals(0L, presidente.brancos());
         assertEquals(1L, presidente.nulos());
-        assertEquals("Emily Vik", deputado.linhas().get(0).opcao());
-        assertEquals(3L, deputado.linhas().get(0).votos());
-        assertEquals(60.0, deputado.linhas().get(0).percentual(), 0.001);
+        var linhaEmily = deputado.linhas().stream()
+                .filter(linha -> linha.numero().equals("9267"))
+                .findFirst().orElseThrow();
+        assertEquals("Emily Vik", linhaEmily.opcao());
+        assertEquals(3L, linhaEmily.votos());
+        assertEquals(60.0, linhaEmily.percentual(), 0.001);
         assertTrue(deputado.linhas().stream().anyMatch(
                 linha -> linha.numero().equals("10")
                         && linha.opcao().contains("Partido dos Gatos Revolucionários")));
